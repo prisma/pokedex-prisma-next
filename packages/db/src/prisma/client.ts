@@ -1,6 +1,5 @@
 import { ensureDbConnected, resetDbConnectionState, db } from "./db";
 
-import type { Contract } from "../../prisma/generated/contract.d";
 import type { PlainObject } from "./metadata";
 
 import { resolveModelName } from "./metadata";
@@ -27,23 +26,15 @@ type PrismaModelDelegate = {
   count(args?: PlainObject): Promise<number>;
 };
 
-type KnownLiteralKeys<T> = {
-  [K in keyof T]-?: K extends string
-    ? string extends K
-      ? never
-      : K
-    : K extends number
-      ? number extends K
-        ? never
-        : K
-      : K extends symbol
-        ? symbol extends K
-          ? never
-          : K
-        : never;
-}[keyof T];
-
-type PrismaModelKey = KnownLiteralKeys<Contract["mappings"]["tableToModel"]>;
+type PrismaModelDelegates = {
+  user: PrismaModelDelegate;
+  session: PrismaModelDelegate;
+  account: PrismaModelDelegate;
+  verification: PrismaModelDelegate;
+  todo: PrismaModelDelegate;
+  pokemon: PrismaModelDelegate;
+  spawnPoint: PrismaModelDelegate;
+};
 
 export type PrismaClientLike = {
   $connect(): Promise<void>;
@@ -53,9 +44,7 @@ export type PrismaClientLike = {
       | readonly Promise<unknown>[]
       | ((client: PrismaClientLike) => Promise<unknown>),
   ): Promise<unknown>;
-} & {
-  [K in PrismaModelKey]: PrismaModelDelegate;
-};
+} & PrismaModelDelegates;
 
 function getCollection(modelName: string): any {
   return (db.orm as Record<string, unknown>)[modelName];

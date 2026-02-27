@@ -4,7 +4,13 @@ import { Database, Loader2, Sparkles, Swords } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { orpc } from "@/utils/orpc";
@@ -22,14 +28,18 @@ function typeBadgeClass(type: string): string {
 
   const classes: Record<string, string> = {
     grass: "bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300",
-    poison: "bg-fuchsia-100 text-fuchsia-800 dark:bg-fuchsia-950 dark:text-fuchsia-300",
+    poison:
+      "bg-fuchsia-100 text-fuchsia-800 dark:bg-fuchsia-950 dark:text-fuchsia-300",
     fire: "bg-orange-100 text-orange-800 dark:bg-orange-950 dark:text-orange-300",
     flying: "bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300",
     water: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300",
-    electric: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300",
-    ghost: "bg-violet-100 text-violet-800 dark:bg-violet-950 dark:text-violet-300",
+    electric:
+      "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300",
+    ghost:
+      "bg-violet-100 text-violet-800 dark:bg-violet-950 dark:text-violet-300",
     ice: "bg-cyan-100 text-cyan-800 dark:bg-cyan-950 dark:text-cyan-300",
-    dragon: "bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300",
+    dragon:
+      "bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300",
     psychic: "bg-pink-100 text-pink-800 dark:bg-pink-950 dark:text-pink-300",
   };
 
@@ -97,7 +107,9 @@ function PokedexRoute() {
   const [search, setSearch] = useState("");
   const [type, setType] = useState("");
   const [legendaryOnly, setLegendaryOnly] = useState(false);
-  const [selectedDexNumber, setSelectedDexNumber] = useState<number | null>(null);
+  const [selectedDexNumber, setSelectedDexNumber] = useState<number | null>(
+    null,
+  );
 
   const [battleStyle, setBattleStyle] = useState<TeamBattleStyle>("balanced");
   const [preferredType, setPreferredType] = useState("");
@@ -115,7 +127,8 @@ function PokedexRoute() {
     }),
   );
 
-  const listPokemon = (listQuery.data as unknown as PokedexPokemon[] | undefined) ?? [];
+  const listPokemon =
+    (listQuery.data as unknown as PokedexPokemon[] | undefined) ?? [];
   const selectedDex = selectedDexNumber ?? listPokemon[0]?.dexNumber ?? null;
 
   const selectedPokemonQuery = useQuery({
@@ -125,7 +138,9 @@ function PokedexRoute() {
     enabled: selectedDex !== null,
   });
 
-  const typeBreakdownQuery = useQuery(orpc.pokedex.typeBreakdown.queryOptions());
+  const typeBreakdownQuery = useQuery(
+    orpc.pokedex.typeBreakdown.queryOptions(),
+  );
 
   const teamBuilderQuery = useQuery(
     orpc.pokedex.teamBuilder.queryOptions({
@@ -139,7 +154,7 @@ function PokedexRoute() {
   );
 
   const seedMutation = useMutation(
-    orpc.pokedex.seedDemo.mutationOptions({
+    orpc.pokedex.importPokemon.mutationOptions({
       onSuccess: () => {
         listQuery.refetch();
         selectedPokemonQuery.refetch();
@@ -157,44 +172,55 @@ function PokedexRoute() {
     : [];
 
   const totalPokemon = listPokemon.length;
-  const totalLegendary = listPokemon.filter((pokemon) => pokemon.isLegendary).length;
+  const totalLegendary = listPokemon.filter(
+    (pokemon) => pokemon.isLegendary,
+  ).length;
 
   const topTypes = useMemo(() => {
     return (typeBreakdownQuery.data ?? []).slice(0, 5);
   }, [typeBreakdownQuery.data]);
 
-  const teamBuilderResult = teamBuilderQuery.data as TeamBuilderResult | undefined;
+  const teamBuilderResult = teamBuilderQuery.data as
+    | TeamBuilderResult
+    | undefined;
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8">
       <div className="grid gap-6">
-        <Card className="border-none bg-gradient-to-r from-rose-500 to-orange-500 text-white shadow-xl">
+        <Card className="border">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-2xl">
               <Sparkles className="h-6 w-6" />
               Prisma Next Pokedex Demo
             </CardTitle>
-            <CardDescription className="text-rose-50">
-              High-level query interface first, plus one low-level SQL endpoint for team drafting.
+            <CardDescription className="">
+              High-level query interface first, plus one low-level SQL endpoint
+              for team drafting.
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-wrap items-center gap-3">
             <Button
               onClick={() => seedMutation.mutate({ forceReset: false })}
               disabled={seedMutation.isPending}
-              className="bg-white text-rose-700 hover:bg-rose-50"
+              className=" hover:opacity-90"
             >
-              {seedMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Seed Demo"}
+              {seedMutation.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                "Import Pokemon"
+              )}
             </Button>
             <Button
-              variant="secondary"
+              variant="outline"
               onClick={() => seedMutation.mutate({ forceReset: true })}
               disabled={seedMutation.isPending}
+              className=""
             >
-              Reseed Demo Data
+              Reimport From PokeAPI
             </Button>
-            <div className="text-sm text-rose-50">
-              {seedMutation.data?.message ?? "Seed once to load starter Pokemon + spawn points."}
+            <div className="text-sm ">
+              {seedMutation.data?.message ??
+                "Import from PokeAPI to load the full dataset."}
             </div>
           </CardContent>
         </Card>
@@ -207,7 +233,8 @@ function PokedexRoute() {
                 High-Level Query Interface
               </CardTitle>
               <CardDescription>
-                Filters and card data are served from `prisma.pokemon.findMany(...)` with relation lookups.
+                Filters and card data are served from
+                `prisma.pokemon.findMany(...)` with relation lookups.
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
@@ -225,7 +252,9 @@ function PokedexRoute() {
                 <label className="flex items-center gap-2 text-sm">
                   <Checkbox
                     checked={legendaryOnly}
-                    onCheckedChange={(checked) => setLegendaryOnly(checked === true)}
+                    onCheckedChange={(checked) =>
+                      setLegendaryOnly(checked === true)
+                    }
                   />
                   Legendary only
                 </label>
@@ -251,8 +280,12 @@ function PokedexRoute() {
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <div className="text-xs text-muted-foreground">#{pokemon.dexNumber}</div>
-                          <div className="text-lg font-semibold">{pokemon.name}</div>
+                          <div className="text-xs text-muted-foreground">
+                            #{pokemon.dexNumber}
+                          </div>
+                          <div className="text-lg font-semibold">
+                            {pokemon.name}
+                          </div>
                           <div className="mt-1 flex flex-wrap gap-2">
                             <span
                               className={`rounded-full px-2 py-0.5 text-xs font-medium ${typeBadgeClass(
@@ -290,7 +323,7 @@ function PokedexRoute() {
                 </div>
               ) : (
                 <div className="rounded-md border border-dashed p-6 text-center text-sm text-muted-foreground">
-                  No Pokemon yet. Click Seed Demo above.
+                  No Pokemon yet. Click Import Pokemon above.
                 </div>
               )}
             </CardContent>
@@ -300,7 +333,9 @@ function PokedexRoute() {
             <Card>
               <CardHeader>
                 <CardTitle>Selected Pokemon</CardTitle>
-                <CardDescription>Includes spawn points via relation include.</CardDescription>
+                <CardDescription>
+                  Includes spawn points via relation include.
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 {selectedPokemonQuery.isLoading ? (
@@ -310,19 +345,21 @@ function PokedexRoute() {
                     <div className="font-medium">
                       #{selectedPokemon.dexNumber} {selectedPokemon.name}
                     </div>
-                    <div>
-                      Spawn points: {selectedSpawnPoints.length}
-                    </div>
+                    <div>Spawn points: {selectedSpawnPoints.length}</div>
                     <ul className="space-y-2 text-muted-foreground">
-                      {selectedSpawnPoints.slice(0, 3).map((spawn: SpawnPoint) => (
-                        <li key={spawn.id}>
-                          {spawn.label} · {spawn.region}
-                        </li>
-                      ))}
+                      {selectedSpawnPoints
+                        .slice(0, 3)
+                        .map((spawn: SpawnPoint) => (
+                          <li key={spawn.id}>
+                            {spawn.label} · {spawn.region}
+                          </li>
+                        ))}
                     </ul>
                   </div>
                 ) : (
-                  <div className="text-sm text-muted-foreground">Pick a Pokemon card to inspect.</div>
+                  <div className="text-sm text-muted-foreground">
+                    Pick a Pokemon card to inspect.
+                  </div>
                 )}
               </CardContent>
             </Card>
@@ -330,12 +367,17 @@ function PokedexRoute() {
             <Card>
               <CardHeader>
                 <CardTitle>Type Meta</CardTitle>
-                <CardDescription>Computed from high-level reads.</CardDescription>
+                <CardDescription>
+                  Computed from high-level reads.
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 text-sm">
                   {topTypes.map((row) => (
-                    <li key={row.type} className="flex items-center justify-between">
+                    <li
+                      key={row.type}
+                      className="flex items-center justify-between"
+                    >
                       <span>{row.type}</span>
                       <span className="text-muted-foreground">
                         {row.total} total · {row.legendary} legendary
@@ -355,7 +397,8 @@ function PokedexRoute() {
               Low-Level Query API
             </CardTitle>
             <CardDescription>
-              Team Builder Analyzer uses `db.sql.raw` with CTEs + window functions for ranked picks.
+              Team Builder Analyzer uses `db.sql.raw` with CTEs + window
+              functions for ranked picks.
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">
@@ -382,14 +425,18 @@ function PokedexRoute() {
               <label className="flex items-center gap-2 text-sm">
                 <Checkbox
                   checked={allowLegendaryTeam}
-                  onCheckedChange={(checked) => setAllowLegendaryTeam(checked === true)}
+                  onCheckedChange={(checked) =>
+                    setAllowLegendaryTeam(checked === true)
+                  }
                 />
                 Allow legendary
               </label>
             </div>
 
             <div className="flex flex-wrap gap-2">
-              {(["balanced", "offense", "defense", "speed"] as TeamBattleStyle[]).map((style) => (
+              {(
+                ["balanced", "offense", "defense", "speed"] as TeamBattleStyle[]
+              ).map((style) => (
                 <Button
                   key={style}
                   variant={battleStyle === style ? "default" : "outline"}
@@ -398,8 +445,16 @@ function PokedexRoute() {
                   {style}
                 </Button>
               ))}
-              <Button variant="secondary" onClick={() => teamBuilderQuery.refetch()} disabled={teamBuilderQuery.isFetching}>
-                {teamBuilderQuery.isFetching ? <Loader2 className="h-4 w-4 animate-spin" /> : "Refresh analysis"}
+              <Button
+                variant="secondary"
+                onClick={() => teamBuilderQuery.refetch()}
+                disabled={teamBuilderQuery.isFetching}
+              >
+                {teamBuilderQuery.isFetching ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  "Refresh analysis"
+                )}
               </Button>
             </div>
 
@@ -411,7 +466,9 @@ function PokedexRoute() {
                       {row.name} · #{row.dexNumber}
                     </div>
                     <div className="mt-1 flex flex-wrap gap-1">
-                      <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${typeBadgeClass(row.primaryType)}`}>
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-xs font-medium ${typeBadgeClass(row.primaryType)}`}
+                      >
                         {row.primaryType}
                       </span>
                       {row.secondaryType ? (
@@ -423,7 +480,8 @@ function PokedexRoute() {
                       ) : null}
                     </div>
                     <div className="mt-1 text-xs text-muted-foreground">
-                      role {row.teamRole} · score {row.battleScore} · rank {row.overallRank}
+                      role {row.teamRole} · score {row.battleScore} · rank{" "}
+                      {row.overallRank}
                     </div>
                     <div className="mt-2 grid grid-cols-4 gap-2 text-[10px]">
                       <StatLabel label="HP" value={row.hp} />
@@ -436,17 +494,23 @@ function PokedexRoute() {
               </div>
             ) : (
               <div className="text-sm text-muted-foreground">
-                No team draft available for this filter. Try a different style or type.
+                No team draft available for this filter. Try a different style
+                or type.
               </div>
             )}
 
             {teamBuilderResult ? (
               <div className="rounded-md border border-dashed p-3 text-sm text-muted-foreground">
-                Style: {teamBuilderResult.summary.battleStyle} · Team: {teamBuilderResult.summary.generatedSize}/
-                {teamBuilderResult.summary.requestedSize} · Avg score: {teamBuilderResult.summary.averageBattleScore}
-                {" · "}Unique primary types: {teamBuilderResult.summary.uniquePrimaryTypes}
-                {" · "}Legendary picks: {teamBuilderResult.summary.legendaryCount}
-                {" · "}Coverage: {teamBuilderResult.summary.typeCoverage.join(", ") || "none"}
+                Style: {teamBuilderResult.summary.battleStyle} · Team:{" "}
+                {teamBuilderResult.summary.generatedSize}/
+                {teamBuilderResult.summary.requestedSize} · Avg score:{" "}
+                {teamBuilderResult.summary.averageBattleScore}
+                {" · "}Unique primary types:{" "}
+                {teamBuilderResult.summary.uniquePrimaryTypes}
+                {" · "}Legendary picks:{" "}
+                {teamBuilderResult.summary.legendaryCount}
+                {" · "}Coverage:{" "}
+                {teamBuilderResult.summary.typeCoverage.join(", ") || "none"}
               </div>
             ) : null}
           </CardContent>

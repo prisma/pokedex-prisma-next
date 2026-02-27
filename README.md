@@ -49,7 +49,7 @@ bun run dev
 - Web: [http://localhost:3001](http://localhost:3001)
 - Server/API: [http://localhost:3000](http://localhost:3000)
 
-5. Open [http://localhost:3001](http://localhost:3001) and click **Seed Demo**.
+5. Open [http://localhost:3001](http://localhost:3001) and click **Import Pokemon**.
 
 ## Run The App
 
