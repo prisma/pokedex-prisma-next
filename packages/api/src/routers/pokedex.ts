@@ -39,48 +39,31 @@ export const pokedexRouter = {
       }
 
       if (input.type) {
-        const typeFilter = input.type;
         query = query.where((p: any) =>
           or(
-            p.primaryType.ilike(`%${typeFilter}%`),
-            p.secondaryType.ilike(`%${typeFilter}%`),
+            p.primaryType.ilike(`%${input.type}%`),
+            p.secondaryType.ilike(`%${input.type}%`),
           ),
         );
       }
 
       if (input.search) {
-        const searchTerm = input.search;
         query = query.where((p: any) =>
           or(
-            p.name.ilike(`%${searchTerm}%`),
-            p.primaryType.ilike(`%${searchTerm}%`),
-            p.secondaryType.ilike(`%${searchTerm}%`),
+            p.name.ilike(`%${input.search}%`),
+            p.primaryType.ilike(`%${input.search}%`),
+            p.secondaryType.ilike(`%${input.search}%`),
           ),
         );
       }
 
-      const rows = await query.take(input.limit).all();
-      const pokemonList = [...rows];
+      const withSpawns = query
+        // @ts-expect-error — relation types don't resolve with complex contracts
+        .include("spawnPoints", (sp: any) => sp);
 
-      // Fetch spawn points separately
-      const pokemonIds = pokemonList.map((p) => p.id);
-      if (pokemonIds.length > 0) {
-        const spawnPoints = await client.spawnPoints!
-          .where((sp: any) => sp.pokemonId.in(pokemonIds))
-          .all();
-        const spawnMap = new Map<number, any[]>();
-        for (const sp of spawnPoints) {
-          const list = spawnMap.get(sp.pokemonId) ?? [];
-          list.push(sp);
-          spawnMap.set(sp.pokemonId, list);
-        }
-        return pokemonList.map((p) => ({
-          ...p,
-          spawnPoints: spawnMap.get(p.id) ?? [],
-        }));
-      }
+      const rows = await withSpawns.take(input.limit).all();
 
-      return pokemonList.map((p) => ({ ...p, spawnPoints: [] as any[] }));
+      return [...rows];
     }),
 
   byDexNumber: publicProcedure
@@ -90,16 +73,13 @@ export const pokedexRouter = {
 
       const pokemon = await client.pokemon!
         .where({ dexNumber: input.dexNumber })
+        // @ts-expect-error — relation types don't resolve with complex contracts
+        .include("spawnPoints", (sp: any) =>
+          sp.orderBy((s: any) => s.encounterRate.desc()),
+        )
         .find();
 
-      if (!pokemon) return null;
-
-      // Fetch spawn points separately
-      const spawnPoints = await client.spawnPoints!
-        .where({ pokemonId: pokemon.id })
-        .all();
-
-      return { ...pokemon, spawnPoints: [...spawnPoints] };
+      return pokemon ?? null;
     }),
 
   typeBreakdown: publicProcedure.handler(async () => {
