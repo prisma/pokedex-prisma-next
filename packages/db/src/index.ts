@@ -1,9 +1,9 @@
 import { Collection, or, orm } from "@prisma-next/sql-orm-client";
 import type { Runtime } from "@prisma-next/sql-runtime";
 import type { Contract } from "./prisma/contract.d";
-import { db } from "./prisma/db";
+import { db, getRuntime } from "./prisma/db";
 
-export { db };
+export { db, getRuntime };
 
 const contract = db.context.contract as Contract;
 

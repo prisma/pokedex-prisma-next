@@ -20,18 +20,24 @@
     "db:studio": "echo \"Prisma Next does not include Studio. Use db:verify or a SQL GUI.\""
   },
   "dependencies": {
+    "@prisma-next/adapter-postgres": "dev",
+    "@prisma-next/core-execution-plane": "dev",
+    "@prisma-next/driver-postgres": "dev",
+    "@prisma-next/integration-kysely": "dev",
     "@prisma-next/postgres": "dev",
+    "@prisma-next/sql-contract": "dev",
     "@prisma-next/sql-orm-client": "dev",
-    "dotenv": "catalog:"
+    "@prisma-next/sql-runtime": "dev",
+    "@prisma-next/target-postgres": "dev",
+    "dotenv": "catalog:",
+    "kysely": "^0.28.10",
+    "pg": "^8.13.0"
   },
   "devDependencies": {
     "@pokedex/config": "workspace:*",
-    "@prisma-next/adapter-postgres": "dev",
     "@prisma-next/cli": "dev",
-    "@prisma-next/driver-postgres": "dev",
     "@prisma-next/family-sql": "dev",
     "@prisma-next/sql-contract-ts": "dev",
-    "@prisma-next/target-postgres": "dev",
     "typescript": "catalog:"
   }
 }

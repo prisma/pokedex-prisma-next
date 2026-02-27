@@ -1,23 +1,36 @@
 import { all } from "@prisma-next/sql-orm-client";
-import { createOrmClient } from "./index";
-import { db } from "./prisma/db";
+import { createOrmClient } from "../index";
+import { getRuntime } from "./db";
 
 const POKEAPI = "https://pokeapi.co/api/v2";
 export const MAX_POKEMON = 1025;
 
 const REGIONS = [
-  "Golden Gate Park", "Los Angeles", "Seattle", "Rocky Mountain",
-  "Chicago", "Times Square", "New Orleans", "Honolulu",
+  "Golden Gate Park",
+  "Los Angeles",
+  "Seattle",
+  "Rocky Mountain",
+  "Chicago",
+  "Times Square",
+  "New Orleans",
+  "Honolulu",
 ];
 
 function titleCase(s: string) {
-  return s.split("-").map((w) => w[0]!.toUpperCase() + w.slice(1)).join(" ");
+  return s
+    .split("-")
+    .map((w) => w[0]!.toUpperCase() + w.slice(1))
+    .join(" ");
 }
 
 async function fetchPokemon(dexNumber: number) {
   const [poke, species] = await Promise.all([
-    fetch(`${POKEAPI}/pokemon/${dexNumber}`).then((r) => r.json()) as Promise<any>,
-    fetch(`${POKEAPI}/pokemon-species/${dexNumber}`).then((r) => r.json()) as Promise<any>,
+    fetch(`${POKEAPI}/pokemon/${dexNumber}`).then((r) =>
+      r.json(),
+    ) as Promise<any>,
+    fetch(`${POKEAPI}/pokemon-species/${dexNumber}`).then((r) =>
+      r.json(),
+    ) as Promise<any>,
   ]);
 
   const types = [...poke.types].sort((a: any, b: any) => a.slot - b.slot);
@@ -42,11 +55,13 @@ async function fetchPokemon(dexNumber: number) {
 }
 
 export async function seedDatabase(limit: number, forceReset: boolean) {
-  const client = createOrmClient(db.runtime());
+  const client = createOrmClient(await getRuntime());
   const pokemon_ = client.pokemon!;
   const spawnPoints_ = client.spawnPoints!;
 
-  const { count } = await pokemon_.aggregate((agg: any) => ({ count: agg.count() })) as { count: number };
+  const { count } = (await pokemon_.aggregate((agg: any) => ({
+    count: agg.count(),
+  }))) as { count: number };
 
   if (count > 0 && !forceReset) {
     return { seeded: false, pokemonCount: count, message: "Already seeded." };
@@ -58,7 +73,10 @@ export async function seedDatabase(limit: number, forceReset: boolean) {
   }
 
   // Fetch all pokemon from PokeAPI in batches of 25
-  const dexNumbers = Array.from({ length: Math.min(limit, MAX_POKEMON) }, (_, i) => i + 1);
+  const dexNumbers = Array.from(
+    { length: Math.min(limit, MAX_POKEMON) },
+    (_, i) => i + 1,
+  );
   const pokemon: Awaited<ReturnType<typeof fetchPokemon>>[] = [];
 
   for (let i = 0; i < dexNumbers.length; i += 25) {
@@ -82,7 +100,10 @@ export async function seedDatabase(limit: number, forceReset: boolean) {
     region: REGIONS[(p.dexNumber - 1) % REGIONS.length]!,
     latitude: 37.7 + ((p.dexNumber * 17) % 90) / 1000,
     longitude: -122.4 + ((p.dexNumber * 31) % 90) / 1000,
-    encounterRate: Math.max(5, 90 - Math.floor((p.hp + p.attack + p.defense + p.speed) / 10)),
+    encounterRate: Math.max(
+      5,
+      90 - Math.floor((p.hp + p.attack + p.defense + p.speed) / 10),
+    ),
   }));
 
   for (let i = 0; i < spawnPoints.length; i += 500) {
