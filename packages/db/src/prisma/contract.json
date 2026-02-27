@@ -2,7 +2,7 @@
   "schemaVersion": "1",
   "targetFamily": "sql",
   "target": "postgres",
-  "storageHash": "sha256:6ccb7a1fedea2a56d2ca9c90f3420fa73affca3a27b1c0b5acc8e809840280dc",
+  "storageHash": "sha256:8335eba12b0269022cf31a8e6f9fdcc056c04a7863343c1b8b8074d1564483a7",
   "profileHash": "sha256:f8f8f7f23ce43cd1b7344e9c97651617112e7d216338d43f071a445b1fca8627",
   "models": {
     "Account": {
@@ -52,6 +52,53 @@
         "table": "account"
       }
     },
+    "Pokemon": {
+      "fields": {
+        "attack": {
+          "column": "attack"
+        },
+        "createdAt": {
+          "column": "createdAt"
+        },
+        "defense": {
+          "column": "defense"
+        },
+        "dexNumber": {
+          "column": "dexNumber"
+        },
+        "hp": {
+          "column": "hp"
+        },
+        "id": {
+          "column": "id"
+        },
+        "isLegendary": {
+          "column": "isLegendary"
+        },
+        "name": {
+          "column": "name"
+        },
+        "primaryType": {
+          "column": "primaryType"
+        },
+        "secondaryType": {
+          "column": "secondaryType"
+        },
+        "speed": {
+          "column": "speed"
+        },
+        "spriteUrl": {
+          "column": "spriteUrl"
+        },
+        "updatedAt": {
+          "column": "updatedAt"
+        }
+      },
+      "relations": {},
+      "storage": {
+        "table": "pokemon"
+      }
+    },
     "Session": {
       "fields": {
         "createdAt": {
@@ -82,6 +129,38 @@
       "relations": {},
       "storage": {
         "table": "session"
+      }
+    },
+    "SpawnPoint": {
+      "fields": {
+        "createdAt": {
+          "column": "createdAt"
+        },
+        "encounterRate": {
+          "column": "encounterRate"
+        },
+        "id": {
+          "column": "id"
+        },
+        "label": {
+          "column": "label"
+        },
+        "latitude": {
+          "column": "latitude"
+        },
+        "longitude": {
+          "column": "longitude"
+        },
+        "pokemonId": {
+          "column": "pokemonId"
+        },
+        "region": {
+          "column": "region"
+        }
+      },
+      "relations": {},
+      "storage": {
+        "table": "spawnPoint"
       }
     },
     "Todo": {
@@ -259,6 +338,109 @@
         },
         "uniques": []
       },
+      "pokemon": {
+        "columns": {
+          "attack": {
+            "codecId": "pg/int4@1",
+            "nativeType": "int4"
+          },
+          "createdAt": {
+            "codecId": "pg/timestamptz@1",
+            "default": {
+              "expression": "now()",
+              "kind": "function"
+            },
+            "nativeType": "timestamptz"
+          },
+          "defense": {
+            "codecId": "pg/int4@1",
+            "nativeType": "int4"
+          },
+          "dexNumber": {
+            "codecId": "pg/int4@1",
+            "nativeType": "int4"
+          },
+          "hp": {
+            "codecId": "pg/int4@1",
+            "nativeType": "int4"
+          },
+          "id": {
+            "codecId": "pg/int4@1",
+            "default": {
+              "expression": "autoincrement()",
+              "kind": "function"
+            },
+            "nativeType": "int4"
+          },
+          "isLegendary": {
+            "codecId": "pg/bool@1",
+            "default": {
+              "kind": "literal",
+              "value": false
+            },
+            "nativeType": "bool"
+          },
+          "name": {
+            "codecId": "pg/text@1",
+            "nativeType": "text"
+          },
+          "primaryType": {
+            "codecId": "pg/text@1",
+            "nativeType": "text"
+          },
+          "secondaryType": {
+            "codecId": "pg/text@1",
+            "nativeType": "text",
+            "nullable": true
+          },
+          "speed": {
+            "codecId": "pg/int4@1",
+            "nativeType": "int4"
+          },
+          "spriteUrl": {
+            "codecId": "pg/text@1",
+            "nativeType": "text"
+          },
+          "updatedAt": {
+            "codecId": "pg/timestamptz@1",
+            "default": {
+              "expression": "now()",
+              "kind": "function"
+            },
+            "nativeType": "timestamptz"
+          }
+        },
+        "foreignKeys": [],
+        "indexes": [
+          {
+            "columns": [
+              "primaryType"
+            ]
+          },
+          {
+            "columns": [
+              "isLegendary"
+            ]
+          }
+        ],
+        "primaryKey": {
+          "columns": [
+            "id"
+          ]
+        },
+        "uniques": [
+          {
+            "columns": [
+              "dexNumber"
+            ]
+          },
+          {
+            "columns": [
+              "name"
+            ]
+          }
+        ]
+      },
       "session": {
         "columns": {
           "createdAt": {
@@ -339,6 +521,90 @@
             ]
           }
         ]
+      },
+      "spawnPoint": {
+        "columns": {
+          "createdAt": {
+            "codecId": "pg/timestamptz@1",
+            "default": {
+              "expression": "now()",
+              "kind": "function"
+            },
+            "nativeType": "timestamptz"
+          },
+          "encounterRate": {
+            "codecId": "pg/int4@1",
+            "nativeType": "int4"
+          },
+          "id": {
+            "codecId": "pg/int4@1",
+            "default": {
+              "expression": "autoincrement()",
+              "kind": "function"
+            },
+            "nativeType": "int4"
+          },
+          "label": {
+            "codecId": "pg/text@1",
+            "nativeType": "text"
+          },
+          "latitude": {
+            "codecId": "pg/float8@1",
+            "nativeType": "float8"
+          },
+          "longitude": {
+            "codecId": "pg/float8@1",
+            "nativeType": "float8"
+          },
+          "pokemonId": {
+            "codecId": "pg/int4@1",
+            "nativeType": "int4"
+          },
+          "region": {
+            "codecId": "pg/text@1",
+            "nativeType": "text"
+          }
+        },
+        "foreignKeys": [
+          {
+            "columns": [
+              "pokemonId"
+            ],
+            "constraint": true,
+            "index": true,
+            "onDelete": "cascade",
+            "references": {
+              "columns": [
+                "id"
+              ],
+              "table": "pokemon"
+            }
+          }
+        ],
+        "indexes": [
+          {
+            "columns": [
+              "pokemonId"
+            ]
+          },
+          {
+            "columns": [
+              "region"
+            ]
+          },
+          {
+            "columns": [
+              "latitude",
+              "longitude"
+            ]
+          }
+        ],
+        "primaryKey": {
+          "columns": [
+            "id"
+          ]
+        },
+        "uniques": []
       },
       "todo": {
         "columns": {
@@ -509,6 +775,20 @@
         "to": "User"
       }
     },
+    "pokemon": {
+      "spawnPoints": {
+        "cardinality": "1:N",
+        "on": {
+          "childCols": [
+            "pokemonId"
+          ],
+          "parentCols": [
+            "id"
+          ]
+        },
+        "to": "SpawnPoint"
+      }
+    },
     "session": {
       "user": {
         "cardinality": "N:1",
@@ -521,6 +801,20 @@
           ]
         },
         "to": "User"
+      }
+    },
+    "spawnPoint": {
+      "pokemon": {
+        "cardinality": "N:1",
+        "on": {
+          "childCols": [
+            "id"
+          ],
+          "parentCols": [
+            "pokemonId"
+          ]
+        },
+        "to": "Pokemon"
       }
     },
     "user": {

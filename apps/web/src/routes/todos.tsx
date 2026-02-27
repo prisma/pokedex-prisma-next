@@ -9,6 +9,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { orpc } from "@/utils/orpc";
 
+type TodoItem = {
+  id: number;
+  text: string;
+  completed: boolean;
+};
+
 export const Route = createFileRoute("/todos")({
   component: TodosRoute,
 });
@@ -83,7 +89,7 @@ function TodosRoute() {
             <p className="py-4 text-center">No todos yet. Add one above!</p>
           ) : (
             <ul className="space-y-2">
-              {todos.data?.map((todo) => (
+              {todos.data?.map((todo: TodoItem) => (
                 <li
                   key={todo.id}
                   className="flex items-center justify-between rounded-md border p-2"

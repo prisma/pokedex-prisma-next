@@ -25,6 +25,51 @@ const db = postgres<Contract>({
   extensions: [],
 });
 
+type DriverBinding = {
+  kind: "url";
+  url: string;
+};
+
+type RuntimeDriver = {
+  state?: "unbound" | "connected" | "closed";
+  connect?: (binding: DriverBinding) => Promise<void>;
+};
+
+type RuntimeWithDriver = {
+  core?: {
+    driver?: RuntimeDriver;
+  };
+};
+
+let runtimeConnectPromise: Promise<void> | undefined;
+
+async function ensureDbConnected(): Promise<void> {
+  if (!runtimeConnectPromise) {
+    runtimeConnectPromise = (async () => {
+      const runtime = db.runtime() as RuntimeWithDriver;
+      const driver = runtime.core?.driver;
+
+      if (!driver?.connect) {
+        return;
+      }
+
+      if (driver.state === "connected") {
+        return;
+      }
+
+      await driver.connect({
+        kind: "url",
+        url: env.DATABASE_URL,
+      });
+    })().catch((error) => {
+      runtimeConnectPromise = undefined;
+      throw error;
+    });
+  }
+
+  await runtimeConnectPromise;
+}
+
 const contractModels = (db.context.contract.models ?? {}) as Record<string, ModelDefinition>;
 const modelToTable = (db.context.contract.mappings?.modelToTable ?? {}) as Record<string, string>;
 
@@ -495,6 +540,8 @@ function createModelDelegate(modelAlias: string) {
   const modelName = resolveModelName(modelAlias);
 
   const findMany = async (args: PlainObject = {}) => {
+    await ensureDbConnected();
+
     let query = getCollection(modelName);
     query = applyWhere(query, args["where"], "optional");
     query = applyOrderBy(query, args["orderBy"]);
@@ -543,6 +590,8 @@ function createModelDelegate(modelAlias: string) {
         throw new Error("create() requires a data object.");
       }
 
+      await ensureDbConnected();
+
       let query = getCollection(modelName);
       query = applySelection(query, modelName, args["select"], args["include"]);
       return await query.create(normalizeRecord(data));
@@ -558,6 +607,8 @@ function createModelDelegate(modelAlias: string) {
         return { count: 0 };
       }
 
+      await ensureDbConnected();
+
       const query = getCollection(modelName);
       const count = await query.createCount(records);
       return { count };
@@ -567,6 +618,8 @@ function createModelDelegate(modelAlias: string) {
       if (!isPlainObject(data)) {
         throw new Error("update() requires a data object.");
       }
+
+      await ensureDbConnected();
 
       let query = getCollection(modelName);
       query = applyWhere(query, args["where"], "required");
@@ -585,12 +638,16 @@ function createModelDelegate(modelAlias: string) {
         throw new Error("updateMany() requires a data object.");
       }
 
+      await ensureDbConnected();
+
       let query = getCollection(modelName);
       query = applyWhere(query, args["where"], "all");
       const count = await query.updateCount(withUpdatedAt(modelName, normalizeRecord(data)));
       return { count };
     },
     async delete(args: PlainObject) {
+      await ensureDbConnected();
+
       let query = getCollection(modelName);
       query = applyWhere(query, args["where"], "required");
       query = applySelection(query, modelName, args["select"], args["include"]);
@@ -603,12 +660,16 @@ function createModelDelegate(modelAlias: string) {
       return result;
     },
     async deleteMany(args: PlainObject = {}) {
+      await ensureDbConnected();
+
       let query = getCollection(modelName);
       query = applyWhere(query, args["where"], "all");
       const count = await query.deleteCount();
       return { count };
     },
     async count(args: PlainObject = {}) {
+      await ensureDbConnected();
+
       let query = getCollection(modelName);
       query = applyWhere(query, args["where"], "all");
       const aggregateResult = await query.aggregate((aggregate: any) => ({
@@ -630,10 +691,11 @@ const delegateCache = new Map<string, unknown>();
 const prisma = new Proxy(
   {
     async $connect() {
-      db.runtime();
+      await ensureDbConnected();
     },
     async $disconnect() {
       await db.runtime().close();
+      runtimeConnectPromise = undefined;
     },
     async $transaction(input: unknown) {
       if (Array.isArray(input)) {
@@ -669,5 +731,5 @@ const prisma = new Proxy(
   },
 );
 
-export { db };
+export { db, ensureDbConnected };
 export default prisma as any;

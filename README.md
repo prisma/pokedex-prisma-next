@@ -1,73 +1,117 @@
-# pokedex
+# Prisma Next Pokedex Demo
 
-This project was created with [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), a modern TypeScript stack that combines React, TanStack Router, Hono, ORPC, and more.
+A full-stack Pokédex built to showcase **Prisma Next** in a realistic app flow.
 
-## Features
+This demo intentionally highlights:
 
-- **TypeScript** - For type safety and improved developer experience
-- **TanStack Router** - File-based routing with full type safety
-- **TailwindCSS** - Utility-first CSS for rapid UI development
-- **shadcn/ui** - Reusable UI components
-- **Hono** - Lightweight, performant server framework
-- **oRPC** - End-to-end type-safe APIs with OpenAPI integration
-- **Bun** - Runtime environment
-- **Prisma Next** - Contract-first data layer
-- **PostgreSQL** - Database engine
-- **Authentication** - Better-Auth
-- **Turborepo** - Optimized monorepo build system
+- **High-level query interface** for most application logic (main focus)
+- **Low-level query API** for one targeted case
+- **PostGIS** extension for geospatial spawn lookups
 
-## Getting Started
+## What This Showcases
 
-First, install the dependencies:
+- Prisma Next contract-first schema in `packages/db/prisma/contract.ts`
+- High-level model queries via the Prisma-like interface in `@pokedex/db`
+- Low-level raw plan execution with `db.sql.raw` + `runtime.execute(...)`
+- PostGIS functions: `ST_DWithin` and `ST_DistanceSphere`
+
+## Quick Start
+
+1. Install dependencies
 
 ```bash
 bun install
 ```
 
-## Database Setup
+2. Configure environment variables in `apps/server/.env`
 
-This project uses PostgreSQL with Prisma Next.
+Required:
 
-1. Make sure you have a PostgreSQL database set up.
-2. Update your `apps/server/.env` file with your PostgreSQL connection details.
+- `DATABASE_URL`
+- `BETTER_AUTH_SECRET`
+- `BETTER_AUTH_URL`
+- `CORS_ORIGIN`
 
-3. Emit the Prisma Next contract and initialize the database:
+3. Initialize database + PostGIS
 
 ```bash
-bun run db:emit
 bun run db:init
 ```
 
-Then, run the development server:
+This runs:
+
+- contract emit
+- `prisma-next db init`
+- `CREATE EXTENSION IF NOT EXISTS postgis`
+
+4. Start the app
 
 ```bash
 bun run dev
 ```
 
-Open [http://localhost:3001](http://localhost:3001) in your browser to see the web application.
-The API is running at [http://localhost:3000](http://localhost:3000).
+- Web: [http://localhost:3001](http://localhost:3001)
+- Server/API: [http://localhost:3000](http://localhost:3000)
 
-## Project Structure
+5. Open **Pokedex** in the top nav and click **Seed Demo**.
 
-```
-pokedex/
-├── apps/
-│   ├── web/         # Frontend application (React + TanStack Router)
-│   └── server/      # Backend API (Hono, ORPC)
-├── packages/
-│   ├── api/         # API layer / business logic
-│   ├── auth/        # Authentication configuration & logic
-│   └── db/          # Database schema & queries
-```
+## Query Interface Breakdown
 
-## Available Scripts
+### High-level interface (primary)
 
-- `bun run dev`: Start all applications in development mode
-- `bun run build`: Build all applications
-- `bun run dev:web`: Start only the web application
-- `bun run dev:server`: Start only the server
-- `bun run check-types`: Check TypeScript types across all apps
-- `bun run db:emit`: Emit contract artifacts (`contract.json` + `contract.d.ts`)
-- `bun run db:init`: Apply contract-managed schema updates
-- `bun run db:verify`: Verify database marker/contract compatibility
-- `bun run db:sign`: Re-sign an existing database marker to current contract (when schema already matches)
+Main logic lives in:
+
+- `packages/api/src/routers/pokedex.ts`
+
+Examples:
+
+- `prisma.pokemon.findMany(...)` with filtering + includes
+- `prisma.pokemon.findUnique(...)`
+- `prisma.pokemon.createMany(...)`
+- `prisma.spawnPoint.createMany(...)`
+- `prisma.*.count(...)`
+
+### Low-level interface (targeted demo)
+
+Also in:
+
+- `packages/api/src/routers/pokedex.ts` (`nearestSpawns` route)
+
+Uses:
+
+- `db.sql.raw` to build a raw execution plan
+- `db.runtime().execute(plan)` to run it
+- PostGIS spatial functions for distance/radius search
+
+## PostGIS Usage
+
+PostGIS is enabled by:
+
+- `packages/db/scripts/ensure-postgis.ts`
+- `db:init` script in `packages/db/package.json`
+
+Geospatial query (demo endpoint):
+
+- `ST_DWithin(...::geography, ...::geography, radiusMeters)`
+- `ST_DistanceSphere(pointA, pointB)`
+
+## Important Files
+
+- `packages/db/prisma/contract.ts` - Prisma Next contract (Pokemon + SpawnPoint models)
+- `packages/db/scripts/ensure-postgis.ts` - extension bootstrap
+- `packages/db/src/index.ts` - runtime + high-level interface bridge
+- `packages/api/src/routers/pokedex.ts` - demo API surface
+- `apps/web/src/routes/pokedex.tsx` - demo UI
+
+## Useful Scripts
+
+- `bun run db:emit` - emit contract artifacts
+- `bun run db:init` - init DB and ensure PostGIS
+- `bun run db:verify` - verify marker/contract compatibility
+- `bun run db:postgis` - manually ensure PostGIS only
+- `bun run dev` - run web + server
+
+## Notes
+
+- This is a demo app designed for readability and query-surface clarity.
+- If your Postgres provider disallows `CREATE EXTENSION`, pre-enable PostGIS on the database.

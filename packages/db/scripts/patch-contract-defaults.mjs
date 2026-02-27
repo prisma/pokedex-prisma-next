@@ -13,6 +13,7 @@ const contract = JSON.parse(fs.readFileSync(contractPath, "utf8"));
 const patches = [
   { table: "user", column: "emailVerified", value: false },
   { table: "todo", column: "completed", value: false },
+  { table: "pokemon", column: "isLegendary", value: false },
 ];
 
 for (const patch of patches) {

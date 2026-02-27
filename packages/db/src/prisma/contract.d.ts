@@ -27,7 +27,7 @@ import type {
 } from '@prisma-next/sql-contract/types';
 
 export type StorageHash =
-  StorageHashBase<'sha256:6ccb7a1fedea2a56d2ca9c90f3420fa73affca3a27b1c0b5acc8e809840280dc'>;
+  StorageHashBase<'sha256:8335eba12b0269022cf31a8e6f9fdcc056c04a7863343c1b8b8074d1564483a7'>;
 export type ExecutionHash = ExecutionHashBase<string>;
 export type ProfileHash =
   ProfileHashBase<'sha256:f8f8f7f23ce43cd1b7344e9c97651617112e7d216338d43f071a445b1fca8627'>;
@@ -302,6 +302,153 @@ export type Contract = SqlContract<
         indexes: readonly [];
         foreignKeys: readonly [];
       };
+      readonly pokemon: {
+        columns: {
+          readonly id: {
+            readonly nativeType: 'int4';
+            readonly codecId: 'pg/int4@1';
+            readonly nullable: false;
+            readonly default: { readonly kind: 'function'; readonly expression: 'autoincrement()' };
+          };
+          readonly dexNumber: {
+            readonly nativeType: 'int4';
+            readonly codecId: 'pg/int4@1';
+            readonly nullable: false;
+          };
+          readonly name: {
+            readonly nativeType: 'text';
+            readonly codecId: 'pg/text@1';
+            readonly nullable: false;
+          };
+          readonly primaryType: {
+            readonly nativeType: 'text';
+            readonly codecId: 'pg/text@1';
+            readonly nullable: false;
+          };
+          readonly secondaryType: {
+            readonly nativeType: 'text';
+            readonly codecId: 'pg/text@1';
+            readonly nullable: true;
+          };
+          readonly hp: {
+            readonly nativeType: 'int4';
+            readonly codecId: 'pg/int4@1';
+            readonly nullable: false;
+          };
+          readonly attack: {
+            readonly nativeType: 'int4';
+            readonly codecId: 'pg/int4@1';
+            readonly nullable: false;
+          };
+          readonly defense: {
+            readonly nativeType: 'int4';
+            readonly codecId: 'pg/int4@1';
+            readonly nullable: false;
+          };
+          readonly speed: {
+            readonly nativeType: 'int4';
+            readonly codecId: 'pg/int4@1';
+            readonly nullable: false;
+          };
+          readonly spriteUrl: {
+            readonly nativeType: 'text';
+            readonly codecId: 'pg/text@1';
+            readonly nullable: false;
+          };
+          readonly isLegendary: {
+            readonly nativeType: 'bool';
+            readonly codecId: 'pg/bool@1';
+            readonly nullable: false;
+            readonly default: {
+              readonly kind: 'literal';
+              readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+            };
+          };
+          readonly createdAt: {
+            readonly nativeType: 'timestamptz';
+            readonly codecId: 'pg/timestamptz@1';
+            readonly nullable: false;
+            readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+          };
+          readonly updatedAt: {
+            readonly nativeType: 'timestamptz';
+            readonly codecId: 'pg/timestamptz@1';
+            readonly nullable: false;
+            readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+          };
+        };
+        primaryKey: { readonly columns: readonly ['id'] };
+        uniques: readonly [
+          { readonly columns: readonly ['dexNumber'] },
+          { readonly columns: readonly ['name'] },
+        ];
+        indexes: readonly [
+          { readonly columns: readonly ['primaryType'] },
+          { readonly columns: readonly ['isLegendary'] },
+        ];
+        foreignKeys: readonly [];
+      };
+      readonly spawnPoint: {
+        columns: {
+          readonly id: {
+            readonly nativeType: 'int4';
+            readonly codecId: 'pg/int4@1';
+            readonly nullable: false;
+            readonly default: { readonly kind: 'function'; readonly expression: 'autoincrement()' };
+          };
+          readonly pokemonId: {
+            readonly nativeType: 'int4';
+            readonly codecId: 'pg/int4@1';
+            readonly nullable: false;
+          };
+          readonly label: {
+            readonly nativeType: 'text';
+            readonly codecId: 'pg/text@1';
+            readonly nullable: false;
+          };
+          readonly region: {
+            readonly nativeType: 'text';
+            readonly codecId: 'pg/text@1';
+            readonly nullable: false;
+          };
+          readonly latitude: {
+            readonly nativeType: 'float8';
+            readonly codecId: 'pg/float8@1';
+            readonly nullable: false;
+          };
+          readonly longitude: {
+            readonly nativeType: 'float8';
+            readonly codecId: 'pg/float8@1';
+            readonly nullable: false;
+          };
+          readonly encounterRate: {
+            readonly nativeType: 'int4';
+            readonly codecId: 'pg/int4@1';
+            readonly nullable: false;
+          };
+          readonly createdAt: {
+            readonly nativeType: 'timestamptz';
+            readonly codecId: 'pg/timestamptz@1';
+            readonly nullable: false;
+            readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+          };
+        };
+        primaryKey: { readonly columns: readonly ['id'] };
+        uniques: readonly [];
+        indexes: readonly [
+          { readonly columns: readonly ['pokemonId'] },
+          { readonly columns: readonly ['region'] },
+          { readonly columns: readonly ['latitude', 'longitude'] },
+        ];
+        foreignKeys: readonly [
+          {
+            readonly columns: readonly ['pokemonId'];
+            readonly references: { readonly table: 'pokemon'; readonly columns: readonly ['id'] };
+            readonly constraint: true;
+            readonly index: true;
+          },
+        ];
+      };
     };
     readonly types: Record<string, never>;
   },
@@ -368,6 +515,37 @@ export type Contract = SqlContract<
         readonly completed: CodecTypes['pg/bool@1']['output'];
       };
     };
+    readonly Pokemon: {
+      storage: { readonly table: 'pokemon' };
+      fields: {
+        readonly id: CodecTypes['pg/int4@1']['output'];
+        readonly dexNumber: CodecTypes['pg/int4@1']['output'];
+        readonly name: CodecTypes['pg/text@1']['output'];
+        readonly primaryType: CodecTypes['pg/text@1']['output'];
+        readonly secondaryType: CodecTypes['pg/text@1']['output'] | null;
+        readonly hp: CodecTypes['pg/int4@1']['output'];
+        readonly attack: CodecTypes['pg/int4@1']['output'];
+        readonly defense: CodecTypes['pg/int4@1']['output'];
+        readonly speed: CodecTypes['pg/int4@1']['output'];
+        readonly spriteUrl: CodecTypes['pg/text@1']['output'];
+        readonly isLegendary: CodecTypes['pg/bool@1']['output'];
+        readonly createdAt: CodecTypes['pg/timestamptz@1']['output'];
+        readonly updatedAt: CodecTypes['pg/timestamptz@1']['output'];
+      };
+    };
+    readonly SpawnPoint: {
+      storage: { readonly table: 'spawnPoint' };
+      fields: {
+        readonly id: CodecTypes['pg/int4@1']['output'];
+        readonly pokemonId: CodecTypes['pg/int4@1']['output'];
+        readonly label: CodecTypes['pg/text@1']['output'];
+        readonly region: CodecTypes['pg/text@1']['output'];
+        readonly latitude: CodecTypes['pg/float8@1']['output'];
+        readonly longitude: CodecTypes['pg/float8@1']['output'];
+        readonly encounterRate: CodecTypes['pg/int4@1']['output'];
+        readonly createdAt: CodecTypes['pg/timestamptz@1']['output'];
+      };
+    };
   },
   {
     readonly user: {
@@ -408,6 +586,26 @@ export type Contract = SqlContract<
         };
       };
     };
+    readonly pokemon: {
+      readonly spawnPoints: {
+        readonly to: 'SpawnPoint';
+        readonly cardinality: '1:N';
+        readonly on: {
+          readonly parentCols: readonly ['id'];
+          readonly childCols: readonly ['pokemonId'];
+        };
+      };
+    };
+    readonly spawnPoint: {
+      readonly pokemon: {
+        readonly to: 'Pokemon';
+        readonly cardinality: 'N:1';
+        readonly on: {
+          readonly parentCols: readonly ['pokemonId'];
+          readonly childCols: readonly ['id'];
+        };
+      };
+    };
   },
   {
     modelToTable: {
@@ -416,6 +614,8 @@ export type Contract = SqlContract<
       readonly Account: 'account';
       readonly Verification: 'verification';
       readonly Todo: 'todo';
+      readonly Pokemon: 'pokemon';
+      readonly SpawnPoint: 'spawnPoint';
     };
     tableToModel: {
       readonly user: 'User';
@@ -423,6 +623,8 @@ export type Contract = SqlContract<
       readonly account: 'Account';
       readonly verification: 'Verification';
       readonly todo: 'Todo';
+      readonly pokemon: 'Pokemon';
+      readonly spawnPoint: 'SpawnPoint';
     };
     fieldToColumn: {
       readonly User: {
@@ -468,6 +670,31 @@ export type Contract = SqlContract<
         readonly updatedAt: 'updatedAt';
       };
       readonly Todo: { readonly id: 'id'; readonly text: 'text'; readonly completed: 'completed' };
+      readonly Pokemon: {
+        readonly id: 'id';
+        readonly dexNumber: 'dexNumber';
+        readonly name: 'name';
+        readonly primaryType: 'primaryType';
+        readonly secondaryType: 'secondaryType';
+        readonly hp: 'hp';
+        readonly attack: 'attack';
+        readonly defense: 'defense';
+        readonly speed: 'speed';
+        readonly spriteUrl: 'spriteUrl';
+        readonly isLegendary: 'isLegendary';
+        readonly createdAt: 'createdAt';
+        readonly updatedAt: 'updatedAt';
+      };
+      readonly SpawnPoint: {
+        readonly id: 'id';
+        readonly pokemonId: 'pokemonId';
+        readonly label: 'label';
+        readonly region: 'region';
+        readonly latitude: 'latitude';
+        readonly longitude: 'longitude';
+        readonly encounterRate: 'encounterRate';
+        readonly createdAt: 'createdAt';
+      };
     };
     columnToField: {
       readonly user: {
@@ -513,6 +740,31 @@ export type Contract = SqlContract<
         readonly updatedAt: 'updatedAt';
       };
       readonly todo: { readonly id: 'id'; readonly text: 'text'; readonly completed: 'completed' };
+      readonly pokemon: {
+        readonly id: 'id';
+        readonly dexNumber: 'dexNumber';
+        readonly name: 'name';
+        readonly primaryType: 'primaryType';
+        readonly secondaryType: 'secondaryType';
+        readonly hp: 'hp';
+        readonly attack: 'attack';
+        readonly defense: 'defense';
+        readonly speed: 'speed';
+        readonly spriteUrl: 'spriteUrl';
+        readonly isLegendary: 'isLegendary';
+        readonly createdAt: 'createdAt';
+        readonly updatedAt: 'updatedAt';
+      };
+      readonly spawnPoint: {
+        readonly id: 'id';
+        readonly pokemonId: 'pokemonId';
+        readonly label: 'label';
+        readonly region: 'region';
+        readonly latitude: 'latitude';
+        readonly longitude: 'longitude';
+        readonly encounterRate: 'encounterRate';
+        readonly createdAt: 'createdAt';
+      };
     };
     codecTypes: PgTypes;
     operationTypes: Record<string, never>;
