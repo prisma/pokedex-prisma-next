@@ -1,0 +1,47 @@
+{
+  "name": "@prisma-next/test-utils",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/exports/index.d.mts",
+      "import": "./dist/exports/index.mjs"
+    },
+    "./column-descriptors": {
+      "types": "./dist/exports/column-descriptors.d.mts",
+      "import": "./dist/exports/column-descriptors.mjs"
+    },
+    "./operation-descriptors": {
+      "types": "./dist/exports/operation-descriptors.d.mts",
+      "import": "./dist/exports/operation-descriptors.mjs"
+    },
+    "./timeouts": {
+      "types": "./dist/exports/timeouts.d.mts",
+      "import": "./dist/exports/timeouts.mjs"
+    },
+    "./typed-expectations": {
+      "types": "./dist/exports/typed-expectations.d.mts",
+      "import": "./dist/exports/typed-expectations.mjs"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "test": "vitest run --passWithNoTests",
+    "lint": "biome check . --error-on-warnings",
+    "lint:fix": "biome check --write .",
+    "lint:fix:unsafe": "biome check --write --unsafe .",
+    "clean": "rm -rf dist dist-tsc dist-tsc-prod coverage .tmp-output"
+  },
+  "devDependencies": {
+    "@prisma-next/tsconfig": "workspace:*",
+    "@prisma-next/tsdown": "workspace:*",
+    "@prisma/dev": "catalog:",
+    "@types/pg": "catalog:",
+    "pg": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

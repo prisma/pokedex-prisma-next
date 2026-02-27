@@ -1,0 +1,57 @@
+{
+  "name": "@prisma-next/sql-contract-ts",
+  "version": "0.0.1",
+  "description": "SQL-specific TypeScript contract authoring surface for Prisma Next",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prisma/prisma-next.git",
+    "directory": "packages/2-sql/2-authoring/contract-ts"
+  },
+  "files": [
+    "dist",
+    "src",
+    "schemas"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/contract-builder.d.mts",
+      "import": "./dist/contract-builder.mjs"
+    },
+    "./contract-builder": {
+      "types": "./dist/contract-builder.d.mts",
+      "import": "./dist/contract-builder.mjs"
+    },
+    "./schema-sql": "./schemas/data-contract-sql-v1.json",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "lint": "biome check . --error-on-warnings",
+    "lint:fix": "biome check --write .",
+    "lint:fix:unsafe": "biome check --write --unsafe .",
+    "clean": "rm -rf dist dist-tsc dist-tsc-prod coverage .tmp-output"
+  },
+  "dependencies": {
+    "@prisma-next/contract": "workspace:*",
+    "@prisma-next/contract-authoring": "workspace:*",
+    "@prisma-next/sql-contract": "workspace:*",
+    "@prisma-next/utils": "workspace:*",
+    "arktype": "^2.1.25",
+    "ts-toolbelt": "^9.6.0"
+  },
+  "devDependencies": {
+    "@prisma-next/test-utils": "workspace:*",
+    "@prisma-next/tsconfig": "workspace:*",
+    "@prisma-next/tsdown": "workspace:*",
+    "@types/pg": "catalog:",
+    "pg": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

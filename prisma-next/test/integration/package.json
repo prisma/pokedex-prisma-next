@@ -1,0 +1,50 @@
+{
+  "name": "@prisma-next/integration-tests",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "pretest": "pnpm -w build",
+    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "lint": "biome check . --error-on-warnings",
+    "lint:fix": "biome check --write .",
+    "lint:fix:unsafe": "biome check --write --unsafe .",
+    "clean": "rm -rf dist dist-tsc dist-tsc-prod coverage .tmp-output"
+  },
+  "dependencies": {
+    "@prisma-next/adapter-postgres": "workspace:*",
+    "@prisma-next/cli": "workspace:*",
+    "@prisma-next/contract": "workspace:*",
+    "@prisma-next/core-control-plane": "workspace:*",
+    "@prisma-next/core-execution-plane": "workspace:*",
+    "@prisma-next/driver-postgres": "workspace:*",
+    "@prisma-next/emitter": "workspace:*",
+    "@prisma-next/extension-pgvector": "workspace:*",
+    "@prisma-next/family-sql": "workspace:*",
+    "@prisma-next/integration-kysely": "workspace:*",
+    "@prisma-next/operations": "workspace:*",
+    "@prisma-next/sql-contract": "workspace:*",
+    "@prisma-next/sql-contract-emitter": "workspace:*",
+    "@prisma-next/sql-contract-ts": "workspace:*",
+    "@prisma-next/sql-lane": "workspace:*",
+    "@prisma-next/sql-relational-core": "workspace:*",
+    "@prisma-next/sql-runtime": "workspace:*",
+    "@prisma-next/target-postgres": "workspace:*",
+    "@prisma-next/utils": "workspace:*",
+    "@prisma-next/vite-plugin-contract-emit": "workspace:*",
+    "arktype": "catalog:"
+  },
+  "devDependencies": {
+    "@prisma-next/test-utils": "workspace:*",
+    "@prisma-next/tsconfig": "workspace:*",
+    "@types/pg": "catalog:",
+    "kysely": "catalog:",
+    "pg": "catalog:",
+    "strip-ansi": "^7.1.0",
+    "typescript": "catalog:",
+    "vite": "7.3.1",
+    "vitest": "catalog:"
+  }
+}

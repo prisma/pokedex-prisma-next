@@ -1,0 +1,24 @@
+{
+  "name": "@pokedex/auth",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "dependencies": {
+    "@pokedex/db": "workspace:*",
+    "@pokedex/env": "workspace:*",
+    "better-auth": "catalog:",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@pokedex/config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}
