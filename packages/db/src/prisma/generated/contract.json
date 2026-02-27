@@ -1,0 +1,321 @@
+{
+  "schemaVersion": "1",
+  "targetFamily": "sql",
+  "target": "postgres",
+  "storageHash": "sha256:29e376c32fce322a97b248345781859f1f38517d44505ad3b060f61998d02179",
+  "profileHash": "sha256:f8f8f7f23ce43cd1b7344e9c97651617112e7d216338d43f071a445b1fca8627",
+  "models": {
+    "Pokemon": {
+      "fields": {
+        "attack": {
+          "column": "attack"
+        },
+        "createdAt": {
+          "column": "createdAt"
+        },
+        "defense": {
+          "column": "defense"
+        },
+        "dexNumber": {
+          "column": "dexNumber"
+        },
+        "hp": {
+          "column": "hp"
+        },
+        "id": {
+          "column": "id"
+        },
+        "isLegendary": {
+          "column": "isLegendary"
+        },
+        "name": {
+          "column": "name"
+        },
+        "primaryType": {
+          "column": "primaryType"
+        },
+        "secondaryType": {
+          "column": "secondaryType"
+        },
+        "speed": {
+          "column": "speed"
+        },
+        "spriteUrl": {
+          "column": "spriteUrl"
+        },
+        "updatedAt": {
+          "column": "updatedAt"
+        }
+      },
+      "relations": {},
+      "storage": {
+        "table": "pokemon"
+      }
+    },
+    "SpawnPoint": {
+      "fields": {
+        "createdAt": {
+          "column": "createdAt"
+        },
+        "encounterRate": {
+          "column": "encounterRate"
+        },
+        "id": {
+          "column": "id"
+        },
+        "label": {
+          "column": "label"
+        },
+        "latitude": {
+          "column": "latitude"
+        },
+        "longitude": {
+          "column": "longitude"
+        },
+        "pokemonId": {
+          "column": "pokemonId"
+        },
+        "region": {
+          "column": "region"
+        }
+      },
+      "relations": {},
+      "storage": {
+        "table": "spawnPoint"
+      }
+    }
+  },
+  "storage": {
+    "tables": {
+      "pokemon": {
+        "columns": {
+          "attack": {
+            "codecId": "pg/int4@1",
+            "nativeType": "int4"
+          },
+          "createdAt": {
+            "codecId": "pg/timestamptz@1",
+            "default": {
+              "expression": "now()",
+              "kind": "function"
+            },
+            "nativeType": "timestamptz"
+          },
+          "defense": {
+            "codecId": "pg/int4@1",
+            "nativeType": "int4"
+          },
+          "dexNumber": {
+            "codecId": "pg/int4@1",
+            "nativeType": "int4"
+          },
+          "hp": {
+            "codecId": "pg/int4@1",
+            "nativeType": "int4"
+          },
+          "id": {
+            "codecId": "pg/int4@1",
+            "default": {
+              "expression": "autoincrement()",
+              "kind": "function"
+            },
+            "nativeType": "int4"
+          },
+          "isLegendary": {
+            "codecId": "pg/bool@1",
+            "nativeType": "bool"
+          },
+          "name": {
+            "codecId": "pg/text@1",
+            "nativeType": "text"
+          },
+          "primaryType": {
+            "codecId": "pg/text@1",
+            "nativeType": "text"
+          },
+          "secondaryType": {
+            "codecId": "pg/text@1",
+            "nativeType": "text",
+            "nullable": true
+          },
+          "speed": {
+            "codecId": "pg/int4@1",
+            "nativeType": "int4"
+          },
+          "spriteUrl": {
+            "codecId": "pg/text@1",
+            "nativeType": "text"
+          },
+          "updatedAt": {
+            "codecId": "pg/timestamptz@1",
+            "default": {
+              "expression": "now()",
+              "kind": "function"
+            },
+            "nativeType": "timestamptz"
+          }
+        },
+        "foreignKeys": [],
+        "indexes": [
+          {
+            "columns": [
+              "primaryType"
+            ]
+          },
+          {
+            "columns": [
+              "isLegendary"
+            ]
+          }
+        ],
+        "primaryKey": {
+          "columns": [
+            "id"
+          ]
+        },
+        "uniques": [
+          {
+            "columns": [
+              "dexNumber"
+            ]
+          },
+          {
+            "columns": [
+              "name"
+            ]
+          }
+        ]
+      },
+      "spawnPoint": {
+        "columns": {
+          "createdAt": {
+            "codecId": "pg/timestamptz@1",
+            "default": {
+              "expression": "now()",
+              "kind": "function"
+            },
+            "nativeType": "timestamptz"
+          },
+          "encounterRate": {
+            "codecId": "pg/int4@1",
+            "nativeType": "int4"
+          },
+          "id": {
+            "codecId": "pg/int4@1",
+            "default": {
+              "expression": "autoincrement()",
+              "kind": "function"
+            },
+            "nativeType": "int4"
+          },
+          "label": {
+            "codecId": "pg/text@1",
+            "nativeType": "text"
+          },
+          "latitude": {
+            "codecId": "pg/float8@1",
+            "nativeType": "float8"
+          },
+          "longitude": {
+            "codecId": "pg/float8@1",
+            "nativeType": "float8"
+          },
+          "pokemonId": {
+            "codecId": "pg/int4@1",
+            "nativeType": "int4"
+          },
+          "region": {
+            "codecId": "pg/text@1",
+            "nativeType": "text"
+          }
+        },
+        "foreignKeys": [
+          {
+            "columns": [
+              "pokemonId"
+            ],
+            "constraint": true,
+            "index": true,
+            "onDelete": "cascade",
+            "references": {
+              "columns": [
+                "id"
+              ],
+              "table": "pokemon"
+            }
+          }
+        ],
+        "indexes": [
+          {
+            "columns": [
+              "pokemonId"
+            ]
+          },
+          {
+            "columns": [
+              "region"
+            ]
+          },
+          {
+            "columns": [
+              "latitude",
+              "longitude"
+            ]
+          }
+        ],
+        "primaryKey": {
+          "columns": [
+            "id"
+          ]
+        },
+        "uniques": []
+      }
+    }
+  },
+  "capabilities": {
+    "postgres": {
+      "defaults.now": true,
+      "jsonAgg": true,
+      "lateral": true,
+      "returning": true
+    }
+  },
+  "extensionPacks": {},
+  "meta": {},
+  "sources": {},
+  "relations": {
+    "pokemon": {
+      "spawnPoints": {
+        "cardinality": "1:N",
+        "on": {
+          "childCols": [
+            "pokemonId"
+          ],
+          "parentCols": [
+            "id"
+          ]
+        },
+        "to": "SpawnPoint"
+      }
+    },
+    "spawnPoint": {
+      "pokemon": {
+        "cardinality": "N:1",
+        "on": {
+          "childCols": [
+            "id"
+          ],
+          "parentCols": [
+            "pokemonId"
+          ]
+        },
+        "to": "Pokemon"
+      }
+    }
+  },
+  "_generated": {
+    "warning": "⚠️  GENERATED FILE - DO NOT EDIT",
+    "message": "This file is automatically generated by \"prisma-next contract emit\".",
+    "regenerate": "To regenerate, run: prisma-next contract emit"
+  }
+}

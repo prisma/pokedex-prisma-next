@@ -1,3 +1,0 @@
-{
-  "extends": "@pokedex/config/tsconfig.base.json"
-}

@@ -6,7 +6,7 @@ import postgresDriver from "@prisma-next/driver-postgres/control";
 import sql from "@prisma-next/family-sql/control";
 import postgres from "@prisma-next/target-postgres/control";
 
-import { contract } from "./prisma/contract";
+import { contract } from "./src/prisma/contract";
 
 dotenv.config({
   path: path.join("..", "..", "apps", "server", ".env"),
@@ -20,7 +20,7 @@ export default defineConfig({
   extensionPacks: [],
   contract: {
     source: contract,
-    output: "prisma/generated/contract.json",
+    output: "src/prisma/generated/contract.json",
   },
   db: {
     connection: process.env["DATABASE_URL"],

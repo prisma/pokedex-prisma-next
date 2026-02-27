@@ -33,7 +33,6 @@
     "db:studio": "turbo -F @pokedex/db db:studio"
   },
   "dependencies": {
-    "@pokedex/env": "workspace:*",
     "dotenv": "catalog:",
     "zod": "catalog:"
   },

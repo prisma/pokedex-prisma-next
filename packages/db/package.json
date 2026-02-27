@@ -20,11 +20,9 @@
     "db:studio": "echo \"Prisma Next does not include Studio. Use db:verify or a SQL GUI.\""
   },
   "dependencies": {
-    "@pokedex/env": "workspace:*",
     "@prisma-next/postgres": "dev",
     "@prisma-next/sql-orm-client": "dev",
-    "dotenv": "catalog:",
-    "zod": "catalog:"
+    "dotenv": "catalog:"
   },
   "devDependencies": {
     "@pokedex/config": "workspace:*",

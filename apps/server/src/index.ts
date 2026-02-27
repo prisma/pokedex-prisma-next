@@ -1,8 +1,8 @@
+import "dotenv/config";
 import { onError } from "@orpc/server";
 import { RPCHandler } from "@orpc/server/fetch";
 import { createContext } from "@pokedex/api/context";
 import { appRouter } from "@pokedex/api/routers/index";
-import { env } from "@pokedex/env/server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
@@ -13,7 +13,7 @@ app.use(logger());
 app.use(
   "/*",
   cors({
-    origin: env.CORS_ORIGIN,
+    origin: process.env["CORS_ORIGIN"] ?? "http://localhost:5173",
     allowMethods: ["GET", "POST", "OPTIONS"],
     allowHeaders: ["Content-Type"],
     credentials: true,

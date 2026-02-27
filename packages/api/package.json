@@ -13,9 +13,8 @@
   "dependencies": {
     "@orpc/client": "catalog:",
     "@orpc/server": "catalog:",
+    "@prisma-next/sql-orm-client": "dev",
     "@pokedex/db": "workspace:*",
-    "@pokedex/env": "workspace:*",
-    "dotenv": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

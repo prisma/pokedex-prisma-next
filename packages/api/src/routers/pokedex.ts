@@ -1,4 +1,5 @@
-import prisma, { db, ensureDbConnected } from "@pokedex/db";
+import { all, or } from "@prisma-next/sql-orm-client";
+import { createOrmClient, db } from "@pokedex/db";
 import z from "zod";
 
 import { publicProcedure } from "../index";
@@ -23,17 +24,6 @@ type SeedSpawnPoint = {
   latitude: number;
   longitude: number;
   encounterRate: number;
-};
-
-type SpawnPointRow = {
-  id: number;
-  pokemonId: number;
-  label: string;
-  region: string;
-  latitude: number;
-  longitude: number;
-  encounterRate: number;
-  createdAt?: string;
 };
 
 type PokeApiSpeciesCatalogResponse = {
@@ -228,112 +218,6 @@ async function fetchPokeApiSeedData(limit: number): Promise<{
   };
 }
 
-async function createPokemonInBatches(rows: SeedPokemon[]): Promise<void> {
-  for (const batch of chunkArray(rows, CREATE_MANY_BATCH_SIZE)) {
-    await prisma.pokemon.createMany({ data: batch });
-  }
-}
-
-async function createSpawnPointsInBatches(
-  rows: Array<{
-    pokemonId: number;
-    label: string;
-    region: string;
-    latitude: number;
-    longitude: number;
-    encounterRate: number;
-  }>,
-): Promise<void> {
-  for (const batch of chunkArray(rows, CREATE_MANY_BATCH_SIZE)) {
-    await prisma.spawnPoint.createMany({ data: batch });
-  }
-}
-
-function buildPokemonWhere(input: {
-  search?: string | undefined;
-  type?: string | undefined;
-  legendaryOnly: boolean;
-}) {
-  const filters: unknown[] = [];
-
-  if (input.legendaryOnly) {
-    filters.push({ isLegendary: true });
-  }
-
-  if (input.type) {
-    filters.push({
-      OR: [
-        { primaryType: { contains: input.type, mode: "insensitive" } },
-        { secondaryType: { contains: input.type, mode: "insensitive" } },
-      ],
-    });
-  }
-
-  if (input.search) {
-    filters.push({
-      OR: [
-        { name: { contains: input.search, mode: "insensitive" } },
-        { primaryType: { contains: input.search, mode: "insensitive" } },
-        { secondaryType: { contains: input.search, mode: "insensitive" } },
-      ],
-    });
-  }
-
-  if (filters.length === 0) {
-    return undefined;
-  }
-
-  if (filters.length === 1) {
-    return filters[0];
-  }
-
-  return { AND: filters };
-}
-
-async function executeLowLevelPlan<Row>(plan: unknown): Promise<Row[]> {
-  await ensureDbConnected();
-
-  const connection = await db.runtime().connection();
-  try {
-    return (await connection.execute(plan as never).toArray()) as Row[];
-  } finally {
-    await connection.release();
-  }
-}
-
-async function withSpawnPoints<T extends { id: number }>(
-  pokemonRows: T[],
-): Promise<Array<T & { spawnPoints: SpawnPointRow[] }>> {
-  if (pokemonRows.length === 0) {
-    return [];
-  }
-
-  const pokemonIds = pokemonRows.map((pokemon) => pokemon.id);
-  const spawnPoints = (await prisma.spawnPoint.findMany({
-    where: {
-      pokemonId: {
-        in: pokemonIds,
-      },
-    },
-    orderBy: [{ encounterRate: "desc" }],
-  })) as SpawnPointRow[];
-
-  const spawnPointsByPokemonId = new Map<number, SpawnPointRow[]>();
-  for (const spawnPoint of spawnPoints) {
-    const existing = spawnPointsByPokemonId.get(spawnPoint.pokemonId);
-    if (existing) {
-      existing.push(spawnPoint);
-      continue;
-    }
-    spawnPointsByPokemonId.set(spawnPoint.pokemonId, [spawnPoint]);
-  }
-
-  return pokemonRows.map((pokemon) => ({
-    ...pokemon,
-    spawnPoints: spawnPointsByPokemonId.get(pokemon.id) ?? [],
-  }));
-}
-
 const seedSchema = z.object({
   forceReset: z.boolean().default(false),
   limit: z.number().int().min(1).max(POKEAPI_MAX_LIMIT).default(POKEAPI_MAX_LIMIT),
@@ -352,48 +236,49 @@ const teamBuilderSchema = z.object({
 
 export const pokedexRouter = {
   importPokemon: publicProcedure.input(seedSchema).handler(async ({ input }) => {
-    const pokemonCount = await prisma.pokemon.count();
+    const client = createOrmClient(db.runtime());
 
-    if (pokemonCount > 0 && !input.forceReset) {
+    const pokemonCount = await client.pokemon.aggregate((agg) => ({
+      count: agg.count(),
+    }));
+
+    if (pokemonCount.count > 0 && !input.forceReset) {
+      const spawnPointCount = await client.spawnPoints.aggregate((agg) => ({
+        count: agg.count(),
+      }));
       return {
         seeded: false,
-        pokemonCount,
-        spawnPointCount: await prisma.spawnPoint.count(),
+        pokemonCount: pokemonCount.count,
+        spawnPointCount: spawnPointCount.count,
         message: "Pokemon data already exists. Pass forceReset=true to reseed from PokeAPI.",
       };
     }
 
-    if (pokemonCount > 0) {
-      await prisma.spawnPoint.deleteMany();
-      await prisma.pokemon.deleteMany();
+    if (pokemonCount.count > 0) {
+      await client.spawnPoints.where(all).deleteAll();
+      await client.pokemon.where(all).deleteAll();
     }
 
     const imported = await fetchPokeApiSeedData(input.limit);
     const pokemonRows = imported.pokemon;
     const spawnPointSeedRows = imported.spawnPoints;
 
-    await createPokemonInBatches(pokemonRows);
+    for (const batch of chunkArray(pokemonRows, CREATE_MANY_BATCH_SIZE)) {
+      await client.pokemon.createCount(batch);
+    }
 
-    const idMapRows = await prisma.pokemon.findMany({
-      select: {
-        id: true,
-        dexNumber: true,
-      },
-    });
+    const idMapRows = await client.pokemon
+      .select("id", "dexNumber")
+      .all();
 
     const pokemonIdByDexNumber = new Map<number, number>(
-      idMapRows.map((row: { id: number; dexNumber: number }) => [
-        row.dexNumber,
-        row.id,
-      ]),
+      [...idMapRows].map((row) => [row.dexNumber, row.id]),
     );
 
     const spawnPointRows = spawnPointSeedRows.map((spawn) => {
       const pokemonId = pokemonIdByDexNumber.get(spawn.dexNumber);
       if (!pokemonId) {
-        throw new Error(
-          `Missing seeded pokemon for dexNumber ${spawn.dexNumber}`,
-        );
+        throw new Error(`Missing seeded pokemon for dexNumber ${spawn.dexNumber}`);
       }
 
       return {
@@ -406,7 +291,9 @@ export const pokedexRouter = {
       };
     });
 
-    await createSpawnPointsInBatches(spawnPointRows);
+    for (const batch of chunkArray(spawnPointRows, CREATE_MANY_BATCH_SIZE)) {
+      await client.spawnPoints.createCount(batch);
+    }
 
     return {
       seeded: true,
@@ -419,45 +306,62 @@ export const pokedexRouter = {
   listPokemon: publicProcedure
     .input(listPokemonSchema)
     .handler(async ({ input }) => {
-      const where = buildPokemonWhere(input);
+      const client = createOrmClient(db.runtime());
 
-      const pokemonRows = await prisma.pokemon.findMany({
-        where,
-        orderBy: [{ dexNumber: "asc" }],
-        take: input.limit,
-      });
+      let query = client.pokemon.orderBy((p) => p.dexNumber.asc());
 
-      return await withSpawnPoints(pokemonRows as Array<{ id: number }>);
+      if (input.legendaryOnly) {
+        query = query.where({ isLegendary: true });
+      }
+
+      if (input.type) {
+        const typeFilter = input.type;
+        query = query.where((p) =>
+          or(
+            p.primaryType.ilike(`%${typeFilter}%`),
+            p.secondaryType.ilike(`%${typeFilter}%`),
+          ),
+        );
+      }
+
+      if (input.search) {
+        const searchTerm = input.search;
+        query = query.where((p) =>
+          or(
+            p.name.ilike(`%${searchTerm}%`),
+            p.primaryType.ilike(`%${searchTerm}%`),
+            p.secondaryType.ilike(`%${searchTerm}%`),
+          ),
+        );
+      }
+
+      const rows = await query
+        .withSpawnPoints()
+        .take(input.limit)
+        .all();
+
+      return [...rows];
     }),
 
   byDexNumber: publicProcedure
     .input(z.object({ dexNumber: z.number().int().min(1).max(9999) }))
     .handler(async ({ input }) => {
-      const pokemon = await prisma.pokemon.findUnique({
-        where: {
-          dexNumber: input.dexNumber,
-        },
-      });
+      const client = createOrmClient(db.runtime());
 
-      if (!pokemon) {
-        return null;
-      }
+      const pokemon = await client.pokemon
+        .byDexNumber(input.dexNumber)
+        .withSpawnPoints()
+        .find();
 
-      const [pokemonWithSpawnPoints] = await withSpawnPoints([
-        pokemon as { id: number },
-      ]);
-      return pokemonWithSpawnPoints ?? null;
+      return pokemon ?? null;
     }),
 
   typeBreakdown: publicProcedure.handler(async () => {
-    const pokemon = await prisma.pokemon.findMany({
-      select: {
-        primaryType: true,
-        secondaryType: true,
-        isLegendary: true,
-      },
-      orderBy: [{ dexNumber: "asc" }],
-    });
+    const client = createOrmClient(db.runtime());
+
+    const allPokemon = await client.pokemon
+      .select("primaryType", "secondaryType", "isLegendary")
+      .all();
 
     const breakdown = new Map<
       string,
@@ -481,13 +385,8 @@ export const pokedexRouter = {
       }
     };
 
-    for (const row of pokemon as Array<{
-      primaryType: string;
-      secondaryType: string | null;
-      isLegendary: boolean;
-    }>) {
+    for (const row of allPokemon) {
       upsertType(row.primaryType, row.isLegendary);
-
       if (row.secondaryType) {
         upsertType(row.secondaryType, row.isLegendary);
       }
@@ -505,57 +404,52 @@ export const pokedexRouter = {
     .input(teamBuilderSchema)
     .handler(async ({ input }) => {
       const filterType = input.type?.trim().toLowerCase() || null;
-      const hasTypeFilter = filterType !== null;
-      const typeValue = filterType ?? "";
+      const kysely = db.kysely(db.runtime());
 
-      // Low-level raw SQL plan — showcases db.sql.raw with CTEs + window functions.
-      const plan = db.sql.raw`
-      WITH scored AS (
-        SELECT
-          p."dexNumber",
-          p.name,
-          p."primaryType",
-          p."secondaryType",
-          p.hp,
-          p.attack,
-          p.defense,
-          p.speed,
-          p."isLegendary",
-          (p.hp + p.attack + p.defense + p.speed) AS "totalStats",
-          row_number() OVER (
-            PARTITION BY p."primaryType"
-            ORDER BY (p.hp + p.attack + p.defense + p.speed) DESC
-          ) AS "typeRank"
-        FROM "pokemon" p
-        WHERE (
-          ${hasTypeFilter} = FALSE
-          OR lower(p."primaryType") = ${typeValue}
-          OR lower(coalesce(p."secondaryType", '')) = ${typeValue}
-        )
-      )
-      SELECT *
-      FROM scored
-      WHERE "typeRank" <= 2
-      ORDER BY "totalStats" DESC
-      LIMIT 6;
-    `;
+      let query = kysely
+        .selectFrom("pokemon")
+        .select([
+          "dexNumber",
+          "name",
+          "primaryType",
+          "secondaryType",
+          "hp",
+          "attack",
+          "defense",
+          "speed",
+          "isLegendary",
+        ]);
 
-      const rows = (await executeLowLevelPlan(plan)) as Array<{
-        dexNumber: number;
-        name: string;
-        primaryType: string;
-        secondaryType: string | null;
-        hp: number;
-        attack: number;
-        defense: number;
-        speed: number;
-        isLegendary: boolean;
-        totalStats: number | string;
-      }>;
+      if (filterType) {
+        query = query.where((eb) =>
+          eb.or([
+            eb(eb.fn("lower", ["primaryType"]), "=", filterType),
+            eb(eb.fn("lower", ["secondaryType"]), "=", filterType),
+          ]),
+        );
+      }
 
-      return rows.map((row) => ({
+      const rows = await query.execute();
+
+      const withStats = rows.map((row) => ({
         ...row,
-        totalStats: Number(row.totalStats),
+        totalStats: row.hp + row.attack + row.defense + row.speed,
       }));
+
+      // Pick top 2 per primaryType by totalStats, then top 6 overall.
+      const sorted = withStats.sort((a, b) => b.totalStats - a.totalStats);
+      const countByType = new Map<string, number>();
+      const team = [];
+
+      for (const row of sorted) {
+        const count = countByType.get(row.primaryType) ?? 0;
+        if (count < 2) {
+          team.push(row);
+          countByType.set(row.primaryType, count + 1);
+          if (team.length >= 6) break;
+        }
+      }
+
+      return team;
     }),
 };
