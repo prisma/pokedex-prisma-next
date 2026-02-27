@@ -20,24 +20,24 @@
     "db:studio": "echo \"Prisma Next does not include Studio. Use db:verify or a SQL GUI.\""
   },
   "dependencies": {
-    "@prisma-next/adapter-postgres": "dev",
-    "@prisma-next/core-execution-plane": "dev",
-    "@prisma-next/driver-postgres": "dev",
-    "@prisma-next/integration-kysely": "dev",
-    "@prisma-next/postgres": "dev",
-    "@prisma-next/sql-contract": "dev",
-    "@prisma-next/sql-orm-client": "dev",
-    "@prisma-next/sql-runtime": "dev",
-    "@prisma-next/target-postgres": "dev",
+    "@prisma-next/adapter-postgres": "https://pkg.pr.new/prisma/prisma-next/@prisma-next/adapter-postgres@192",
+    "@prisma-next/core-execution-plane": "https://pkg.pr.new/prisma/prisma-next/@prisma-next/core-execution-plane@192",
+    "@prisma-next/driver-postgres": "https://pkg.pr.new/prisma/prisma-next/@prisma-next/driver-postgres@192",
+    "@prisma-next/integration-kysely": "https://pkg.pr.new/prisma/prisma-next/@prisma-next/integration-kysely@192",
+    "@prisma-next/postgres": "https://pkg.pr.new/prisma/prisma-next/@prisma-next/postgres@192",
+    "@prisma-next/sql-contract": "https://pkg.pr.new/prisma/prisma-next/@prisma-next/sql-contract@192",
+    "@prisma-next/sql-orm-client": "https://pkg.pr.new/prisma/prisma-next/@prisma-next/sql-orm-client@192",
+    "@prisma-next/sql-runtime": "https://pkg.pr.new/prisma/prisma-next/@prisma-next/sql-runtime@192",
+    "@prisma-next/target-postgres": "https://pkg.pr.new/prisma/prisma-next/@prisma-next/target-postgres@192",
     "dotenv": "catalog:",
     "kysely": "^0.28.10",
     "pg": "^8.13.0"
   },
   "devDependencies": {
     "@pokedex/config": "workspace:*",
-    "@prisma-next/cli": "dev",
-    "@prisma-next/family-sql": "dev",
-    "@prisma-next/sql-contract-ts": "dev",
+    "@prisma-next/cli": "https://pkg.pr.new/prisma/prisma-next/@prisma-next/cli@192",
+    "@prisma-next/family-sql": "https://pkg.pr.new/prisma/prisma-next/@prisma-next/family-sql@192",
+    "@prisma-next/sql-contract-ts": "https://pkg.pr.new/prisma/prisma-next/@prisma-next/sql-contract-ts@192",
     "typescript": "catalog:"
   }
 }

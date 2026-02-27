@@ -160,7 +160,7 @@ function PokedexRoute() {
               Prisma Next Pokedex
             </CardTitle>
             <CardDescription>
-              High-level queries + low-level raw SQL, powered by Prisma Next.
+              High-level ORM queries + low-level Kysely DSL, powered by Prisma Next.
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-wrap items-center gap-3">
@@ -196,7 +196,7 @@ function PokedexRoute() {
                 High-Level Queries
               </CardTitle>
               <CardDescription>
-                Uses prisma.pokemon.findMany() with filters and relation lookups.
+                Uses pokemon.where().include().all() with filters and relation lookups.
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
@@ -287,7 +287,7 @@ function PokedexRoute() {
               <CardHeader>
                 <CardTitle>Selected Pokemon</CardTitle>
                 <CardDescription>
-                  Via findUnique + spawn point relations.
+                  Via .where().include("spawnPoints").find() relation lookup.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -347,11 +347,11 @@ function PokedexRoute() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Swords className="h-5 w-5" />
-              Raw SQL — Team Builder
+              Low-Level Query — Team Builder
             </CardTitle>
             <CardDescription>
-              Uses db.sql.raw with a CTE + window function to pick the top 6
-              strongest Pokemon across types.
+              Uses Kysely DSL via db.kysely() to pick the top 6 strongest
+              Pokemon across types.
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">

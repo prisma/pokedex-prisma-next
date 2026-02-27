@@ -2,6 +2,32 @@ import { all } from "@prisma-next/sql-orm-client";
 import { createOrmClient } from "../index";
 import { db } from "./db";
 
+interface PokeApiType {
+  slot: number;
+  type: { name: string };
+}
+
+interface PokeApiStat {
+  base_stat: number;
+  stat: { name: string };
+}
+
+interface PokeApiPokemon {
+  id: number;
+  name: string;
+  types: PokeApiType[];
+  stats: PokeApiStat[];
+  sprites: {
+    front_default: string | null;
+    other?: { "official-artwork"?: { front_default: string | null } };
+  };
+}
+
+interface PokeApiSpecies {
+  is_legendary: boolean;
+  is_mythical: boolean;
+}
+
 const POKEAPI = "https://pokeapi.co/api/v2";
 export const MAX_POKEMON = 1025;
 
@@ -27,15 +53,15 @@ async function fetchPokemon(dexNumber: number) {
   const [poke, species] = await Promise.all([
     fetch(`${POKEAPI}/pokemon/${dexNumber}`).then((r) =>
       r.json(),
-    ) as Promise<any>,
+    ) as Promise<PokeApiPokemon>,
     fetch(`${POKEAPI}/pokemon-species/${dexNumber}`).then((r) =>
       r.json(),
-    ) as Promise<any>,
+    ) as Promise<PokeApiSpecies>,
   ]);
 
-  const types = [...poke.types].sort((a: any, b: any) => a.slot - b.slot);
+  const types = [...poke.types].sort((a, b) => a.slot - b.slot);
   const stat = (name: string) =>
-    poke.stats.find((s: any) => s.stat.name === name)?.base_stat ?? 0;
+    poke.stats.find((s) => s.stat.name === name)?.base_stat ?? 0;
 
   return {
     dexNumber: poke.id as number,
@@ -59,7 +85,7 @@ export async function seedDatabase(limit: number, forceReset: boolean) {
   const pokemon_ = client.pokemon!;
   const spawnPoints_ = client.spawnPoints!;
 
-  const { count } = (await pokemon_.aggregate((agg: any) => ({
+  const { count } = (await pokemon_.aggregate((agg) => ({
     count: agg.count(),
   }))) as { count: number };
 

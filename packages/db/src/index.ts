@@ -17,21 +17,28 @@ class PokemonCollection extends Collection<Contract, "Pokemon"> {
   }
 
   byType(type: string) {
-    return this.where((p: any) =>
-      or(
-        p.primaryType.ilike(`%${type}%`),
-        p.secondaryType.ilike(`%${type}%`),
-      ),
+    return this.where((p) =>
+      or(p.primaryType.ilike(`%${type}%`), p.secondaryType.ilike(`%${type}%`)),
     );
   }
 
   byName(name: string) {
-    return this.where((p: any) => p.name.ilike(`%${name}%`));
+    return this.where((p) => p.name.ilike(`%${name}%`));
+  }
+
+  search(term: string) {
+    return this.where((p) =>
+      or(
+        p.name.ilike(`%${term}%`),
+        p.primaryType.ilike(`%${term}%`),
+        p.secondaryType.ilike(`%${term}%`),
+      ),
+    );
   }
 
   withSpawnPoints() {
-    return this.include("spawnPoints", (sp: any) =>
-      sp.orderBy((s: any) => s.encounterRate.desc()),
+    return this.include("spawnPoints", (sp) =>
+      sp.orderBy((s) => s.encounterRate.desc()),
     );
   }
 }

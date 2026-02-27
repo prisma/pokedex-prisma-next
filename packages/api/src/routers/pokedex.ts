@@ -30,16 +30,14 @@ export const pokedexRouter = {
     .input(listPokemonSchema)
     .handler(async ({ input }) => {
       const client = createOrmClient(db.runtime());
-      const pokemon = client.pokemon!;
-
-      let query = pokemon.orderBy((p: any) => p.dexNumber.asc());
+      let query = client.pokemon!.orderBy((p) => p.dexNumber.asc());
 
       if (input.legendaryOnly) {
         query = query.where({ isLegendary: true });
       }
 
       if (input.type) {
-        query = query.where((p: any) =>
+        query = query.where((p) =>
           or(
             p.primaryType.ilike(`%${input.type}%`),
             p.secondaryType.ilike(`%${input.type}%`),
@@ -48,7 +46,7 @@ export const pokedexRouter = {
       }
 
       if (input.search) {
-        query = query.where((p: any) =>
+        query = query.where((p) =>
           or(
             p.name.ilike(`%${input.search}%`),
             p.primaryType.ilike(`%${input.search}%`),
@@ -57,9 +55,10 @@ export const pokedexRouter = {
         );
       }
 
-      const withSpawns = query.include("spawnPoints", (sp: any) => sp);
-
-      const rows = await withSpawns.take(input.limit).all();
+      const rows = await query
+        .include("spawnPoints", (sp) => sp)
+        .take(input.limit)
+        .all();
 
       return [...rows];
     }),
@@ -70,9 +69,9 @@ export const pokedexRouter = {
       const client = createOrmClient(db.runtime());
 
       const pokemon = await client
-        .pokemon!.where({ dexNumber: input.dexNumber })
-        .include("spawnPoints", (sp: any) =>
-          sp.orderBy((s: any) => s.encounterRate.desc()),
+        .pokemon!.byDexNumber(input.dexNumber)
+        .include("spawnPoints", (sp) =>
+          sp.orderBy((s) => s.encounterRate.desc()),
         )
         .find();
 
@@ -145,7 +144,7 @@ export const pokedexRouter = {
         ]);
 
       if (filterType) {
-        query = query.where((eb: any) =>
+        query = query.where((eb) =>
           eb.or([
             eb(eb.fn("lower", ["primaryType"]), "=", filterType),
             eb(eb.fn("lower", ["secondaryType"]), "=", filterType),
@@ -153,7 +152,7 @@ export const pokedexRouter = {
         );
       }
 
-      const rows: any[] = await query.execute();
+      const rows = await query.execute();
 
       const withStats = rows.map((row) => ({
         ...row,
