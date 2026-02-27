@@ -29,10 +29,10 @@ node_modules/
 .pnp.*
 
 # env
-.env*
-.env.production
-!.env.example
-.dev.vars
+#.env*
+#.env.production
+#!.env.example
+#.dev.vars
 
 # logs
 logs/

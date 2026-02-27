@@ -1,7 +1,0 @@
----
-description: Validate package layering and import rules
----
-```bash
-pnpm lint:deps
-```
-

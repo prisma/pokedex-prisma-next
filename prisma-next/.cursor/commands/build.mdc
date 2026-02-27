@@ -1,7 +1,0 @@
----
-description: Build all packages via Turbo
----
-```bash
-pnpm build
-```
-

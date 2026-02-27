@@ -8,9 +8,9 @@ dist
 build
 *.tsbuildinfo
 
-# Environment variables
-.env
-.env*.local
+## Environment variables
+#.env
+#.env*.local
 
 # IDEs and editors
 .vscode/*
