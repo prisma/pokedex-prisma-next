@@ -18,7 +18,6 @@
     "@pokedex/auth": "workspace:*",
     "@pokedex/db": "workspace:*",
     "@pokedex/env": "workspace:*",
-    "@prisma/client": "catalog:",
     "dotenv": "catalog:",
     "zod": "catalog:"
   },

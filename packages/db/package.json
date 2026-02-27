@@ -10,23 +10,30 @@
     }
   },
   "scripts": {
-    "db:push": "prisma db push",
-    "db:generate": "prisma generate",
-    "db:migrate": "prisma migrate dev",
-    "db:studio": "prisma studio"
+    "db:emit": "prisma-next contract emit --config prisma-next.config.ts && node ./scripts/patch-contract-defaults.mjs",
+    "db:init": "bun run db:emit && prisma-next db init --config prisma-next.config.ts",
+    "db:verify": "bun run db:emit && prisma-next db verify --config prisma-next.config.ts",
+    "db:sign": "bun run db:emit && prisma-next db sign --config prisma-next.config.ts",
+    "db:push": "bun run db:init",
+    "db:generate": "bun run db:emit",
+    "db:migrate": "bun run db:init",
+    "db:studio": "echo \"Prisma Next does not include Studio. Use db:verify or a SQL GUI.\""
   },
   "dependencies": {
     "@pokedex/env": "workspace:*",
-    "@prisma/adapter-pg": "^7.2.0",
-    "@prisma/client": "catalog:",
+    "@prisma-next/postgres": "dev",
+    "@prisma-next/sql-orm-client": "dev",
     "dotenv": "catalog:",
-    "pg": "^8.17.1",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@pokedex/config": "workspace:*",
-    "@types/pg": "^8.16.0",
-    "prisma": "^7.2.0",
+    "@prisma-next/adapter-postgres": "dev",
+    "@prisma-next/cli": "dev",
+    "@prisma-next/driver-postgres": "dev",
+    "@prisma-next/family-sql": "dev",
+    "@prisma-next/sql-contract-ts": "dev",
+    "@prisma-next/target-postgres": "dev",
     "typescript": "catalog:"
   }
 }

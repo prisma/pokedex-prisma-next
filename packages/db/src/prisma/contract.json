@@ -1,0 +1,558 @@
+{
+  "schemaVersion": "1",
+  "targetFamily": "sql",
+  "target": "postgres",
+  "storageHash": "sha256:6ccb7a1fedea2a56d2ca9c90f3420fa73affca3a27b1c0b5acc8e809840280dc",
+  "profileHash": "sha256:f8f8f7f23ce43cd1b7344e9c97651617112e7d216338d43f071a445b1fca8627",
+  "models": {
+    "Account": {
+      "fields": {
+        "accessToken": {
+          "column": "accessToken"
+        },
+        "accessTokenExpiresAt": {
+          "column": "accessTokenExpiresAt"
+        },
+        "accountId": {
+          "column": "accountId"
+        },
+        "createdAt": {
+          "column": "createdAt"
+        },
+        "id": {
+          "column": "id"
+        },
+        "idToken": {
+          "column": "idToken"
+        },
+        "password": {
+          "column": "password"
+        },
+        "providerId": {
+          "column": "providerId"
+        },
+        "refreshToken": {
+          "column": "refreshToken"
+        },
+        "refreshTokenExpiresAt": {
+          "column": "refreshTokenExpiresAt"
+        },
+        "scope": {
+          "column": "scope"
+        },
+        "updatedAt": {
+          "column": "updatedAt"
+        },
+        "userId": {
+          "column": "userId"
+        }
+      },
+      "relations": {},
+      "storage": {
+        "table": "account"
+      }
+    },
+    "Session": {
+      "fields": {
+        "createdAt": {
+          "column": "createdAt"
+        },
+        "expiresAt": {
+          "column": "expiresAt"
+        },
+        "id": {
+          "column": "id"
+        },
+        "ipAddress": {
+          "column": "ipAddress"
+        },
+        "token": {
+          "column": "token"
+        },
+        "updatedAt": {
+          "column": "updatedAt"
+        },
+        "userAgent": {
+          "column": "userAgent"
+        },
+        "userId": {
+          "column": "userId"
+        }
+      },
+      "relations": {},
+      "storage": {
+        "table": "session"
+      }
+    },
+    "Todo": {
+      "fields": {
+        "completed": {
+          "column": "completed"
+        },
+        "id": {
+          "column": "id"
+        },
+        "text": {
+          "column": "text"
+        }
+      },
+      "relations": {},
+      "storage": {
+        "table": "todo"
+      }
+    },
+    "User": {
+      "fields": {
+        "createdAt": {
+          "column": "createdAt"
+        },
+        "email": {
+          "column": "email"
+        },
+        "emailVerified": {
+          "column": "emailVerified"
+        },
+        "id": {
+          "column": "id"
+        },
+        "image": {
+          "column": "image"
+        },
+        "name": {
+          "column": "name"
+        },
+        "updatedAt": {
+          "column": "updatedAt"
+        }
+      },
+      "relations": {},
+      "storage": {
+        "table": "user"
+      }
+    },
+    "Verification": {
+      "fields": {
+        "createdAt": {
+          "column": "createdAt"
+        },
+        "expiresAt": {
+          "column": "expiresAt"
+        },
+        "id": {
+          "column": "id"
+        },
+        "identifier": {
+          "column": "identifier"
+        },
+        "updatedAt": {
+          "column": "updatedAt"
+        },
+        "value": {
+          "column": "value"
+        }
+      },
+      "relations": {},
+      "storage": {
+        "table": "verification"
+      }
+    }
+  },
+  "storage": {
+    "tables": {
+      "account": {
+        "columns": {
+          "accessToken": {
+            "codecId": "pg/text@1",
+            "nativeType": "text",
+            "nullable": true
+          },
+          "accessTokenExpiresAt": {
+            "codecId": "pg/timestamptz@1",
+            "nativeType": "timestamptz",
+            "nullable": true
+          },
+          "accountId": {
+            "codecId": "pg/text@1",
+            "nativeType": "text"
+          },
+          "createdAt": {
+            "codecId": "pg/timestamptz@1",
+            "default": {
+              "expression": "now()",
+              "kind": "function"
+            },
+            "nativeType": "timestamptz"
+          },
+          "id": {
+            "codecId": "pg/text@1",
+            "nativeType": "text"
+          },
+          "idToken": {
+            "codecId": "pg/text@1",
+            "nativeType": "text",
+            "nullable": true
+          },
+          "password": {
+            "codecId": "pg/text@1",
+            "nativeType": "text",
+            "nullable": true
+          },
+          "providerId": {
+            "codecId": "pg/text@1",
+            "nativeType": "text"
+          },
+          "refreshToken": {
+            "codecId": "pg/text@1",
+            "nativeType": "text",
+            "nullable": true
+          },
+          "refreshTokenExpiresAt": {
+            "codecId": "pg/timestamptz@1",
+            "nativeType": "timestamptz",
+            "nullable": true
+          },
+          "scope": {
+            "codecId": "pg/text@1",
+            "nativeType": "text",
+            "nullable": true
+          },
+          "updatedAt": {
+            "codecId": "pg/timestamptz@1",
+            "default": {
+              "expression": "now()",
+              "kind": "function"
+            },
+            "nativeType": "timestamptz"
+          },
+          "userId": {
+            "codecId": "pg/text@1",
+            "nativeType": "text"
+          }
+        },
+        "foreignKeys": [
+          {
+            "columns": [
+              "userId"
+            ],
+            "constraint": true,
+            "index": true,
+            "onDelete": "cascade",
+            "references": {
+              "columns": [
+                "id"
+              ],
+              "table": "user"
+            }
+          }
+        ],
+        "indexes": [
+          {
+            "columns": [
+              "userId"
+            ]
+          }
+        ],
+        "primaryKey": {
+          "columns": [
+            "id"
+          ]
+        },
+        "uniques": []
+      },
+      "session": {
+        "columns": {
+          "createdAt": {
+            "codecId": "pg/timestamptz@1",
+            "default": {
+              "expression": "now()",
+              "kind": "function"
+            },
+            "nativeType": "timestamptz"
+          },
+          "expiresAt": {
+            "codecId": "pg/timestamptz@1",
+            "nativeType": "timestamptz"
+          },
+          "id": {
+            "codecId": "pg/text@1",
+            "nativeType": "text"
+          },
+          "ipAddress": {
+            "codecId": "pg/text@1",
+            "nativeType": "text",
+            "nullable": true
+          },
+          "token": {
+            "codecId": "pg/text@1",
+            "nativeType": "text"
+          },
+          "updatedAt": {
+            "codecId": "pg/timestamptz@1",
+            "default": {
+              "expression": "now()",
+              "kind": "function"
+            },
+            "nativeType": "timestamptz"
+          },
+          "userAgent": {
+            "codecId": "pg/text@1",
+            "nativeType": "text",
+            "nullable": true
+          },
+          "userId": {
+            "codecId": "pg/text@1",
+            "nativeType": "text"
+          }
+        },
+        "foreignKeys": [
+          {
+            "columns": [
+              "userId"
+            ],
+            "constraint": true,
+            "index": true,
+            "onDelete": "cascade",
+            "references": {
+              "columns": [
+                "id"
+              ],
+              "table": "user"
+            }
+          }
+        ],
+        "indexes": [
+          {
+            "columns": [
+              "userId"
+            ]
+          }
+        ],
+        "primaryKey": {
+          "columns": [
+            "id"
+          ]
+        },
+        "uniques": [
+          {
+            "columns": [
+              "token"
+            ]
+          }
+        ]
+      },
+      "todo": {
+        "columns": {
+          "completed": {
+            "codecId": "pg/bool@1",
+            "default": {
+              "kind": "literal",
+              "value": false
+            },
+            "nativeType": "bool"
+          },
+          "id": {
+            "codecId": "pg/int4@1",
+            "default": {
+              "expression": "autoincrement()",
+              "kind": "function"
+            },
+            "nativeType": "int4"
+          },
+          "text": {
+            "codecId": "pg/text@1",
+            "nativeType": "text"
+          }
+        },
+        "foreignKeys": [],
+        "indexes": [],
+        "primaryKey": {
+          "columns": [
+            "id"
+          ]
+        },
+        "uniques": []
+      },
+      "user": {
+        "columns": {
+          "createdAt": {
+            "codecId": "pg/timestamptz@1",
+            "default": {
+              "expression": "now()",
+              "kind": "function"
+            },
+            "nativeType": "timestamptz"
+          },
+          "email": {
+            "codecId": "pg/text@1",
+            "nativeType": "text"
+          },
+          "emailVerified": {
+            "codecId": "pg/bool@1",
+            "default": {
+              "kind": "literal",
+              "value": false
+            },
+            "nativeType": "bool"
+          },
+          "id": {
+            "codecId": "pg/text@1",
+            "nativeType": "text"
+          },
+          "image": {
+            "codecId": "pg/text@1",
+            "nativeType": "text",
+            "nullable": true
+          },
+          "name": {
+            "codecId": "pg/text@1",
+            "nativeType": "text"
+          },
+          "updatedAt": {
+            "codecId": "pg/timestamptz@1",
+            "default": {
+              "expression": "now()",
+              "kind": "function"
+            },
+            "nativeType": "timestamptz"
+          }
+        },
+        "foreignKeys": [],
+        "indexes": [],
+        "primaryKey": {
+          "columns": [
+            "id"
+          ]
+        },
+        "uniques": [
+          {
+            "columns": [
+              "email"
+            ]
+          }
+        ]
+      },
+      "verification": {
+        "columns": {
+          "createdAt": {
+            "codecId": "pg/timestamptz@1",
+            "default": {
+              "expression": "now()",
+              "kind": "function"
+            },
+            "nativeType": "timestamptz"
+          },
+          "expiresAt": {
+            "codecId": "pg/timestamptz@1",
+            "nativeType": "timestamptz"
+          },
+          "id": {
+            "codecId": "pg/text@1",
+            "nativeType": "text"
+          },
+          "identifier": {
+            "codecId": "pg/text@1",
+            "nativeType": "text"
+          },
+          "updatedAt": {
+            "codecId": "pg/timestamptz@1",
+            "default": {
+              "expression": "now()",
+              "kind": "function"
+            },
+            "nativeType": "timestamptz"
+          },
+          "value": {
+            "codecId": "pg/text@1",
+            "nativeType": "text"
+          }
+        },
+        "foreignKeys": [],
+        "indexes": [
+          {
+            "columns": [
+              "identifier"
+            ]
+          }
+        ],
+        "primaryKey": {
+          "columns": [
+            "id"
+          ]
+        },
+        "uniques": []
+      }
+    }
+  },
+  "capabilities": {
+    "postgres": {
+      "defaults.now": true,
+      "jsonAgg": true,
+      "lateral": true,
+      "returning": true
+    }
+  },
+  "extensionPacks": {},
+  "meta": {},
+  "sources": {},
+  "relations": {
+    "account": {
+      "user": {
+        "cardinality": "N:1",
+        "on": {
+          "childCols": [
+            "id"
+          ],
+          "parentCols": [
+            "userId"
+          ]
+        },
+        "to": "User"
+      }
+    },
+    "session": {
+      "user": {
+        "cardinality": "N:1",
+        "on": {
+          "childCols": [
+            "id"
+          ],
+          "parentCols": [
+            "userId"
+          ]
+        },
+        "to": "User"
+      }
+    },
+    "user": {
+      "accounts": {
+        "cardinality": "1:N",
+        "on": {
+          "childCols": [
+            "userId"
+          ],
+          "parentCols": [
+            "id"
+          ]
+        },
+        "to": "Account"
+      },
+      "sessions": {
+        "cardinality": "1:N",
+        "on": {
+          "childCols": [
+            "userId"
+          ],
+          "parentCols": [
+            "id"
+          ]
+        },
+        "to": "Session"
+      }
+    }
+  },
+  "_generated": {
+    "warning": "⚠️  GENERATED FILE - DO NOT EDIT",
+    "message": "This file is automatically generated by \"prisma-next contract emit\".",
+    "regenerate": "To regenerate, run: prisma-next contract emit"
+  }
+}

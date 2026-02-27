@@ -23,6 +23,18 @@
     "db:generate": {
       "cache": false
     },
+    "db:init": {
+      "cache": false
+    },
+    "db:emit": {
+      "cache": false
+    },
+    "db:verify": {
+      "cache": false
+    },
+    "db:sign": {
+      "cache": false
+    },
     "db:migrate": {
       "cache": false,
       "persistent": true

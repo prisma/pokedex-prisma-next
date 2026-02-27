@@ -19,7 +19,6 @@
     "@pokedex/api": "workspace:*",
     "@pokedex/auth": "workspace:*",
     "@pokedex/env": "workspace:*",
-    "@prisma/client": "catalog:",
     "@tailwindcss/vite": "^4.0.15",
     "@tanstack/react-form": "^1.28.0",
     "@tanstack/react-query": "^5.90.12",

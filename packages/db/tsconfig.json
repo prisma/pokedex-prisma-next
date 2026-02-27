@@ -6,5 +6,6 @@
     "sourceMap": true,
     "outDir": "dist",
     "composite": true
-  }
+  },
+  "include": ["src/**/*.ts", "src/**/*.json", "prisma/**/*.ts", "prisma-next.config.ts"]
 }

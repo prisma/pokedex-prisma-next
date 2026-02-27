@@ -11,7 +11,7 @@ This project was created with [Better-T-Stack](https://github.com/AmanVarshney01
 - **Hono** - Lightweight, performant server framework
 - **oRPC** - End-to-end type-safe APIs with OpenAPI integration
 - **Bun** - Runtime environment
-- **Prisma** - TypeScript-first ORM
+- **Prisma Next** - Contract-first data layer
 - **PostgreSQL** - Database engine
 - **Authentication** - Better-Auth
 - **Turborepo** - Optimized monorepo build system
@@ -26,15 +26,16 @@ bun install
 
 ## Database Setup
 
-This project uses PostgreSQL with Prisma.
+This project uses PostgreSQL with Prisma Next.
 
 1. Make sure you have a PostgreSQL database set up.
 2. Update your `apps/server/.env` file with your PostgreSQL connection details.
 
-3. Apply the schema to your database:
+3. Emit the Prisma Next contract and initialize the database:
 
 ```bash
-bun run db:push
+bun run db:emit
+bun run db:init
 ```
 
 Then, run the development server:
@@ -66,7 +67,7 @@ pokedex/
 - `bun run dev:web`: Start only the web application
 - `bun run dev:server`: Start only the server
 - `bun run check-types`: Check TypeScript types across all apps
-- `bun run db:push`: Push schema changes to database
-- `bun run db:generate`: Generate database client/types
-- `bun run db:migrate`: Run database migrations
-- `bun run db:studio`: Open database studio UI
+- `bun run db:emit`: Emit contract artifacts (`contract.json` + `contract.d.ts`)
+- `bun run db:init`: Apply contract-managed schema updates
+- `bun run db:verify`: Verify database marker/contract compatibility
+- `bun run db:sign`: Re-sign an existing database marker to current contract (when schema already matches)

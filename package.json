@@ -16,7 +16,6 @@
       "@orpc/openapi": "^1.12.2",
       "@orpc/zod": "^1.12.2",
       "better-auth": "^1.4.18",
-      "@prisma/client": "^7.2.0",
       "@orpc/client": "^1.12.2"
     }
   },
@@ -28,10 +27,14 @@
     "dev:native": "turbo -F native dev",
     "dev:web": "turbo -F web dev",
     "dev:server": "turbo -F server dev",
+    "db:init": "turbo -F @pokedex/db db:init",
+    "db:emit": "turbo -F @pokedex/db db:emit",
+    "db:verify": "turbo -F @pokedex/db db:verify",
+    "db:sign": "turbo -F @pokedex/db db:sign",
     "db:push": "turbo -F @pokedex/db db:push",
-    "db:studio": "turbo -F @pokedex/db db:studio",
     "db:generate": "turbo -F @pokedex/db db:generate",
-    "db:migrate": "turbo -F @pokedex/db db:migrate"
+    "db:migrate": "turbo -F @pokedex/db db:migrate",
+    "db:studio": "turbo -F @pokedex/db db:studio"
   },
   "dependencies": {
     "@pokedex/env": "workspace:*",
