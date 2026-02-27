@@ -10,7 +10,7 @@ import {
 import { defineContract } from "@prisma-next/sql-contract-ts/contract-builder";
 import postgresPack from "@prisma-next/target-postgres/pack";
 
-export const contract: unknown = defineContract<CodecTypes>()
+export const contract = defineContract<CodecTypes>()
   .target(postgresPack)
   .table("user", (t) =>
     t
@@ -20,7 +20,6 @@ export const contract: unknown = defineContract<CodecTypes>()
       .column("emailVerified", {
         type: boolColumn,
         nullable: false,
-        default: { kind: "literal", value: false },
       })
       .column("image", { type: textColumn, nullable: true })
       .column("createdAt", {
@@ -116,7 +115,6 @@ export const contract: unknown = defineContract<CodecTypes>()
       .column("completed", {
         type: boolColumn,
         nullable: false,
-        default: { kind: "literal", value: false },
       })
       .primaryKey(["id"]),
   )
@@ -139,7 +137,6 @@ export const contract: unknown = defineContract<CodecTypes>()
       .column("isLegendary", {
         type: boolColumn,
         nullable: false,
-        default: { kind: "literal", value: false },
       })
       .column("createdAt", {
         type: timestamptzColumn,

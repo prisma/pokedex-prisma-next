@@ -32,9 +32,6 @@
     "db:verify": {
       "cache": false
     },
-    "db:postgis": {
-      "cache": false
-    },
     "db:sign": {
       "cache": false
     },

@@ -20,7 +20,7 @@ export default defineConfig({
   extensionPacks: [],
   contract: {
     source: contract,
-    output: "src/prisma/contract.json",
+    output: "prisma/generated/contract.json",
   },
   db: {
     connection: process.env["DATABASE_URL"],

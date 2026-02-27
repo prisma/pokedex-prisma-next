@@ -31,7 +31,6 @@
     "db:emit": "turbo -F @pokedex/db db:emit",
     "db:verify": "turbo -F @pokedex/db db:verify",
     "db:sign": "turbo -F @pokedex/db db:sign",
-    "db:postgis": "turbo -F @pokedex/db db:postgis",
     "db:push": "turbo -F @pokedex/db db:push",
     "db:generate": "turbo -F @pokedex/db db:generate",
     "db:migrate": "turbo -F @pokedex/db db:migrate",

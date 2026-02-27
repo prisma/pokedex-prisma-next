@@ -18,6 +18,7 @@ export const todoRouter = {
       return await prisma.todo.create({
         data: {
           text: input.text,
+          completed: false,
         },
       });
     }),

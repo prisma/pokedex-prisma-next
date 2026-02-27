@@ -1,51 +1,466 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { Database, Loader2, Sparkles, Swords } from "lucide-react";
+import { useMemo, useState } from "react";
 
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { orpc } from "@/utils/orpc";
 
 export const Route = createFileRoute("/")({
-  component: HomeComponent,
+  component: PokedexRoute,
 });
 
-const TITLE_TEXT = `
- ██████╗ ███████╗████████╗████████╗███████╗██████╗
- ██╔══██╗██╔════╝╚══██╔══╝╚══██╔══╝██╔════╝██╔══██╗
- ██████╔╝█████╗     ██║      ██║   █████╗  ██████╔╝
- ██╔══██╗██╔══╝     ██║      ██║   ██╔══╝  ██╔══██╗
- ██████╔╝███████╗   ██║      ██║   ███████╗██║  ██║
- ╚═════╝ ╚══════╝   ╚═╝      ╚═╝   ╚══════╝╚═╝  ╚═╝
+function normalizeType(type: string): string {
+  return type.trim().toLowerCase();
+}
 
- ████████╗    ███████╗████████╗ █████╗  ██████╗██╗  ██╗
- ╚══██╔══╝    ██╔════╝╚══██╔══╝██╔══██╗██╔════╝██║ ██╔╝
-    ██║       ███████╗   ██║   ███████║██║     █████╔╝
-    ██║       ╚════██║   ██║   ██╔══██║██║     ██╔═██╗
-    ██║       ███████║   ██║   ██║  ██║╚██████╗██║  ██╗
-    ╚═╝       ╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝
- `;
+function typeBadgeClass(type: string): string {
+  const key = normalizeType(type);
 
-function HomeComponent() {
-  const healthCheck = useQuery(orpc.healthCheck.queryOptions());
+  const classes: Record<string, string> = {
+    grass: "bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300",
+    poison: "bg-fuchsia-100 text-fuchsia-800 dark:bg-fuchsia-950 dark:text-fuchsia-300",
+    fire: "bg-orange-100 text-orange-800 dark:bg-orange-950 dark:text-orange-300",
+    flying: "bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300",
+    water: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300",
+    electric: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300",
+    ghost: "bg-violet-100 text-violet-800 dark:bg-violet-950 dark:text-violet-300",
+    ice: "bg-cyan-100 text-cyan-800 dark:bg-cyan-950 dark:text-cyan-300",
+    dragon: "bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300",
+    psychic: "bg-pink-100 text-pink-800 dark:bg-pink-950 dark:text-pink-300",
+  };
+
+  return classes[key] ?? "bg-muted text-foreground";
+}
+
+type SpawnPoint = {
+  id: number;
+  label: string;
+  region: string;
+  latitude: number;
+  longitude: number;
+  encounterRate: number;
+};
+
+type PokedexPokemon = {
+  id: number;
+  dexNumber: number;
+  name: string;
+  primaryType: string;
+  secondaryType: string | null;
+  hp: number;
+  attack: number;
+  defense: number;
+  speed: number;
+  spriteUrl: string;
+  isLegendary: boolean;
+  spawnPoints: SpawnPoint[];
+};
+
+type TeamBattleStyle = "balanced" | "offense" | "defense" | "speed";
+
+type TeamBuilderPick = {
+  id: number;
+  dexNumber: number;
+  name: string;
+  primaryType: string;
+  secondaryType: string | null;
+  hp: number;
+  attack: number;
+  defense: number;
+  speed: number;
+  isLegendary: boolean;
+  battleScore: number;
+  teamRole: string;
+  typeRank: number;
+  overallRank: number;
+};
+
+type TeamBuilderResult = {
+  summary: {
+    battleStyle: TeamBattleStyle;
+    preferredType: string | null;
+    requestedSize: number;
+    generatedSize: number;
+    uniquePrimaryTypes: number;
+    averageBattleScore: number;
+    legendaryCount: number;
+    typeCoverage: string[];
+  };
+  picks: TeamBuilderPick[];
+};
+
+function PokedexRoute() {
+  const [search, setSearch] = useState("");
+  const [type, setType] = useState("");
+  const [legendaryOnly, setLegendaryOnly] = useState(false);
+  const [selectedDexNumber, setSelectedDexNumber] = useState<number | null>(null);
+
+  const [battleStyle, setBattleStyle] = useState<TeamBattleStyle>("balanced");
+  const [preferredType, setPreferredType] = useState("");
+  const [allowLegendaryTeam, setAllowLegendaryTeam] = useState(false);
+  const [teamSize, setTeamSize] = useState(6);
+
+  const listQuery = useQuery(
+    orpc.pokedex.listPokemon.queryOptions({
+      input: {
+        search: search.trim() || undefined,
+        type: type.trim() || undefined,
+        legendaryOnly,
+        limit: 30,
+      },
+    }),
+  );
+
+  const listPokemon = (listQuery.data as unknown as PokedexPokemon[] | undefined) ?? [];
+  const selectedDex = selectedDexNumber ?? listPokemon[0]?.dexNumber ?? null;
+
+  const selectedPokemonQuery = useQuery({
+    ...orpc.pokedex.byDexNumber.queryOptions({
+      input: { dexNumber: selectedDex ?? 1 },
+    }),
+    enabled: selectedDex !== null,
+  });
+
+  const typeBreakdownQuery = useQuery(orpc.pokedex.typeBreakdown.queryOptions());
+
+  const teamBuilderQuery = useQuery(
+    orpc.pokedex.teamBuilder.queryOptions({
+      input: {
+        battleStyle,
+        preferredType: preferredType.trim() || undefined,
+        allowLegendary: allowLegendaryTeam,
+        limit: teamSize,
+      },
+    }),
+  );
+
+  const seedMutation = useMutation(
+    orpc.pokedex.seedDemo.mutationOptions({
+      onSuccess: () => {
+        listQuery.refetch();
+        selectedPokemonQuery.refetch();
+        typeBreakdownQuery.refetch();
+        teamBuilderQuery.refetch();
+      },
+    }),
+  );
+
+  const selectedPokemon = selectedPokemonQuery.data as
+    | (PokedexPokemon & { spawnPoints?: SpawnPoint[] })
+    | undefined;
+  const selectedSpawnPoints = Array.isArray(selectedPokemon?.spawnPoints)
+    ? selectedPokemon.spawnPoints
+    : [];
+
+  const totalPokemon = listPokemon.length;
+  const totalLegendary = listPokemon.filter((pokemon) => pokemon.isLegendary).length;
+
+  const topTypes = useMemo(() => {
+    return (typeBreakdownQuery.data ?? []).slice(0, 5);
+  }, [typeBreakdownQuery.data]);
+
+  const teamBuilderResult = teamBuilderQuery.data as TeamBuilderResult | undefined;
 
   return (
-    <div className="container mx-auto max-w-3xl px-4 py-2">
-      <pre className="overflow-x-auto font-mono text-sm">{TITLE_TEXT}</pre>
+    <div className="mx-auto w-full max-w-6xl px-4 py-8">
       <div className="grid gap-6">
-        <section className="rounded-lg border p-4">
-          <h2 className="mb-2 font-medium">API Status</h2>
-          <div className="flex items-center gap-2">
-            <div
-              className={`h-2 w-2 rounded-full ${healthCheck.data ? "bg-green-500" : "bg-red-500"}`}
-            />
-            <span className="text-sm text-muted-foreground">
-              {healthCheck.isLoading
-                ? "Checking..."
-                : healthCheck.data
-                  ? "Connected"
-                  : "Disconnected"}
-            </span>
+        <Card className="border-none bg-gradient-to-r from-rose-500 to-orange-500 text-white shadow-xl">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-2xl">
+              <Sparkles className="h-6 w-6" />
+              Prisma Next Pokedex Demo
+            </CardTitle>
+            <CardDescription className="text-rose-50">
+              High-level query interface first, plus one low-level SQL endpoint for team drafting.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-wrap items-center gap-3">
+            <Button
+              onClick={() => seedMutation.mutate({ forceReset: false })}
+              disabled={seedMutation.isPending}
+              className="bg-white text-rose-700 hover:bg-rose-50"
+            >
+              {seedMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Seed Demo"}
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => seedMutation.mutate({ forceReset: true })}
+              disabled={seedMutation.isPending}
+            >
+              Reseed Demo Data
+            </Button>
+            <div className="text-sm text-rose-50">
+              {seedMutation.data?.message ?? "Seed once to load starter Pokemon + spawn points."}
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Database className="h-5 w-5" />
+                High-Level Query Interface
+              </CardTitle>
+              <CardDescription>
+                Filters and card data are served from `prisma.pokemon.findMany(...)` with relation lookups.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              <div className="grid gap-3 md:grid-cols-[2fr_1fr_auto]">
+                <Input
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  placeholder="Search by name or type"
+                />
+                <Input
+                  value={type}
+                  onChange={(event) => setType(event.target.value)}
+                  placeholder="Type filter (e.g. fire)"
+                />
+                <label className="flex items-center gap-2 text-sm">
+                  <Checkbox
+                    checked={legendaryOnly}
+                    onCheckedChange={(checked) => setLegendaryOnly(checked === true)}
+                  />
+                  Legendary only
+                </label>
+              </div>
+
+              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <span>Total listed: {totalPokemon}</span>
+                <span>Legendary listed: {totalLegendary}</span>
+              </div>
+
+              {listQuery.isLoading ? (
+                <div className="flex justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                </div>
+              ) : listPokemon.length > 0 ? (
+                <div className="grid gap-3 md:grid-cols-2">
+                  {listPokemon.map((pokemon) => (
+                    <button
+                      key={pokemon.id}
+                      type="button"
+                      className="rounded-lg border p-3 text-left transition hover:border-rose-400"
+                      onClick={() => setSelectedDexNumber(pokemon.dexNumber)}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <div className="text-xs text-muted-foreground">#{pokemon.dexNumber}</div>
+                          <div className="text-lg font-semibold">{pokemon.name}</div>
+                          <div className="mt-1 flex flex-wrap gap-2">
+                            <span
+                              className={`rounded-full px-2 py-0.5 text-xs font-medium ${typeBadgeClass(
+                                pokemon.primaryType,
+                              )}`}
+                            >
+                              {pokemon.primaryType}
+                            </span>
+                            {pokemon.secondaryType ? (
+                              <span
+                                className={`rounded-full px-2 py-0.5 text-xs font-medium ${typeBadgeClass(
+                                  pokemon.secondaryType,
+                                )}`}
+                              >
+                                {pokemon.secondaryType}
+                              </span>
+                            ) : null}
+                          </div>
+                        </div>
+                        <img
+                          src={pokemon.spriteUrl}
+                          alt={pokemon.name}
+                          className="h-16 w-16 object-contain"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div className="mt-3 grid grid-cols-4 gap-2 text-xs">
+                        <StatLabel label="HP" value={pokemon.hp} />
+                        <StatLabel label="ATK" value={pokemon.attack} />
+                        <StatLabel label="DEF" value={pokemon.defense} />
+                        <StatLabel label="SPD" value={pokemon.speed} />
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="rounded-md border border-dashed p-6 text-center text-sm text-muted-foreground">
+                  No Pokemon yet. Click Seed Demo above.
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <div className="grid gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Selected Pokemon</CardTitle>
+                <CardDescription>Includes spawn points via relation include.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {selectedPokemonQuery.isLoading ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : selectedPokemon ? (
+                  <div className="space-y-3 text-sm">
+                    <div className="font-medium">
+                      #{selectedPokemon.dexNumber} {selectedPokemon.name}
+                    </div>
+                    <div>
+                      Spawn points: {selectedSpawnPoints.length}
+                    </div>
+                    <ul className="space-y-2 text-muted-foreground">
+                      {selectedSpawnPoints.slice(0, 3).map((spawn: SpawnPoint) => (
+                        <li key={spawn.id}>
+                          {spawn.label} · {spawn.region}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : (
+                  <div className="text-sm text-muted-foreground">Pick a Pokemon card to inspect.</div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Type Meta</CardTitle>
+                <CardDescription>Computed from high-level reads.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-sm">
+                  {topTypes.map((row) => (
+                    <li key={row.type} className="flex items-center justify-between">
+                      <span>{row.type}</span>
+                      <span className="text-muted-foreground">
+                        {row.total} total · {row.legendary} legendary
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
           </div>
-        </section>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Swords className="h-5 w-5" />
+              Low-Level Query API
+            </CardTitle>
+            <CardDescription>
+              Team Builder Analyzer uses `db.sql.raw` with CTEs + window functions for ranked picks.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid gap-3 md:grid-cols-3">
+              <Input
+                value={preferredType}
+                onChange={(event) => setPreferredType(event.target.value)}
+                placeholder="Preferred type (optional)"
+              />
+              <Input
+                type="number"
+                min="3"
+                max="6"
+                value={teamSize}
+                onChange={(event) => {
+                  const nextValue = Number(event.target.value);
+                  if (!Number.isFinite(nextValue)) {
+                    return;
+                  }
+                  setTeamSize(Math.max(3, Math.min(6, Math.round(nextValue))));
+                }}
+                placeholder="Team size (3-6)"
+              />
+              <label className="flex items-center gap-2 text-sm">
+                <Checkbox
+                  checked={allowLegendaryTeam}
+                  onCheckedChange={(checked) => setAllowLegendaryTeam(checked === true)}
+                />
+                Allow legendary
+              </label>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {(["balanced", "offense", "defense", "speed"] as TeamBattleStyle[]).map((style) => (
+                <Button
+                  key={style}
+                  variant={battleStyle === style ? "default" : "outline"}
+                  onClick={() => setBattleStyle(style)}
+                >
+                  {style}
+                </Button>
+              ))}
+              <Button variant="secondary" onClick={() => teamBuilderQuery.refetch()} disabled={teamBuilderQuery.isFetching}>
+                {teamBuilderQuery.isFetching ? <Loader2 className="h-4 w-4 animate-spin" /> : "Refresh analysis"}
+              </Button>
+            </div>
+
+            {teamBuilderResult && teamBuilderResult.picks.length > 0 ? (
+              <div className="grid gap-2 md:grid-cols-2">
+                {teamBuilderResult.picks.map((row) => (
+                  <div key={row.id} className="rounded-md border p-3 text-sm">
+                    <div className="font-medium">
+                      {row.name} · #{row.dexNumber}
+                    </div>
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${typeBadgeClass(row.primaryType)}`}>
+                        {row.primaryType}
+                      </span>
+                      {row.secondaryType ? (
+                        <span
+                          className={`rounded-full px-2 py-0.5 text-xs font-medium ${typeBadgeClass(row.secondaryType)}`}
+                        >
+                          {row.secondaryType}
+                        </span>
+                      ) : null}
+                    </div>
+                    <div className="mt-1 text-xs text-muted-foreground">
+                      role {row.teamRole} · score {row.battleScore} · rank {row.overallRank}
+                    </div>
+                    <div className="mt-2 grid grid-cols-4 gap-2 text-[10px]">
+                      <StatLabel label="HP" value={row.hp} />
+                      <StatLabel label="ATK" value={row.attack} />
+                      <StatLabel label="DEF" value={row.defense} />
+                      <StatLabel label="SPD" value={row.speed} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-sm text-muted-foreground">
+                No team draft available for this filter. Try a different style or type.
+              </div>
+            )}
+
+            {teamBuilderResult ? (
+              <div className="rounded-md border border-dashed p-3 text-sm text-muted-foreground">
+                Style: {teamBuilderResult.summary.battleStyle} · Team: {teamBuilderResult.summary.generatedSize}/
+                {teamBuilderResult.summary.requestedSize} · Avg score: {teamBuilderResult.summary.averageBattleScore}
+                {" · "}Unique primary types: {teamBuilderResult.summary.uniquePrimaryTypes}
+                {" · "}Legendary picks: {teamBuilderResult.summary.legendaryCount}
+                {" · "}Coverage: {teamBuilderResult.summary.typeCoverage.join(", ") || "none"}
+              </div>
+            ) : null}
+          </CardContent>
+        </Card>
       </div>
+    </div>
+  );
+}
+
+function StatLabel({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="rounded border px-2 py-1 text-center">
+      <div className="text-[10px] text-muted-foreground">{label}</div>
+      <div className="font-medium">{value}</div>
     </div>
   );
 }

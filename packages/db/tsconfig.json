@@ -7,5 +7,10 @@
     "outDir": "dist",
     "composite": true
   },
-  "include": ["src/**/*.ts", "src/**/*.json", "prisma/**/*.ts", "prisma-next.config.ts"]
+  "include": [
+    "src/**/*.ts",
+    "prisma/**/*.ts",
+    "prisma/**/*.json",
+    "prisma-next.config.ts"
+  ]
 }

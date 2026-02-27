@@ -27,7 +27,7 @@ import type {
 } from '@prisma-next/sql-contract/types';
 
 export type StorageHash =
-  StorageHashBase<'sha256:8335eba12b0269022cf31a8e6f9fdcc056c04a7863343c1b8b8074d1564483a7'>;
+  StorageHashBase<'sha256:18bf7c7b8ce6699755897b77f3c774998aaaaeaba0daf5c74c65e7d0ed992669'>;
 export type ExecutionHash = ExecutionHashBase<string>;
 export type ProfileHash =
   ProfileHashBase<'sha256:f8f8f7f23ce43cd1b7344e9c97651617112e7d216338d43f071a445b1fca8627'>;
@@ -67,10 +67,6 @@ export type Contract = SqlContract<
             readonly nativeType: 'bool';
             readonly codecId: 'pg/bool@1';
             readonly nullable: false;
-            readonly default: {
-              readonly kind: 'literal';
-              readonly value: DefaultLiteralValue<'pg/bool@1', false>;
-            };
           };
           readonly image: {
             readonly nativeType: 'text';
@@ -291,10 +287,6 @@ export type Contract = SqlContract<
             readonly nativeType: 'bool';
             readonly codecId: 'pg/bool@1';
             readonly nullable: false;
-            readonly default: {
-              readonly kind: 'literal';
-              readonly value: DefaultLiteralValue<'pg/bool@1', false>;
-            };
           };
         };
         primaryKey: { readonly columns: readonly ['id'] };
@@ -359,10 +351,6 @@ export type Contract = SqlContract<
             readonly nativeType: 'bool';
             readonly codecId: 'pg/bool@1';
             readonly nullable: false;
-            readonly default: {
-              readonly kind: 'literal';
-              readonly value: DefaultLiteralValue<'pg/bool@1', false>;
-            };
           };
           readonly createdAt: {
             readonly nativeType: 'timestamptz';

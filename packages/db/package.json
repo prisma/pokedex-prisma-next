@@ -10,9 +10,8 @@
     }
   },
   "scripts": {
-    "db:emit": "prisma-next contract emit --config prisma-next.config.ts && node ./scripts/patch-contract-defaults.mjs",
-    "db:postgis": "bun run ./scripts/ensure-postgis.ts",
-    "db:init": "bun run db:emit && prisma-next db init --config prisma-next.config.ts && bun run db:postgis",
+    "db:emit": "prisma-next contract emit --config prisma-next.config.ts",
+    "db:init": "bun run db:emit && prisma-next db init --config prisma-next.config.ts",
     "db:verify": "bun run db:emit && prisma-next db verify --config prisma-next.config.ts",
     "db:sign": "bun run db:emit && prisma-next db sign --config prisma-next.config.ts",
     "db:push": "bun run db:init",
