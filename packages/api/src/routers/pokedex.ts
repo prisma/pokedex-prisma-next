@@ -67,9 +67,9 @@ type PokeApiSpeciesResponse = {
 };
 
 const POKEAPI_BASE_URL = "https://pokeapi.co/api/v2";
-const POKEAPI_SEED_CONCURRENCY = 10;
-const POKEAPI_MAX_LIMIT = 1200;
-const CREATE_MANY_BATCH_SIZE = 200;
+const POKEAPI_SEED_CONCURRENCY = 25;
+const POKEAPI_MAX_LIMIT = 1025;
+const CREATE_MANY_BATCH_SIZE = 500;
 
 const SPAWN_REGIONS: Array<{ region: string; latitude: number; longitude: number }> = [
   { region: "Golden Gate Park", latitude: 37.7694, longitude: -122.4862 },
@@ -249,19 +249,6 @@ async function createSpawnPointsInBatches(
   }
 }
 
-function normalizeNumber(value: unknown): number {
-  if (typeof value === "number") {
-    return value;
-  }
-
-  if (typeof value === "string") {
-    const parsed = Number(value);
-    return Number.isFinite(parsed) ? parsed : 0;
-  }
-
-  return 0;
-}
-
 function buildPokemonWhere(input: {
   search?: string | undefined;
   type?: string | undefined;
@@ -356,16 +343,11 @@ const listPokemonSchema = z.object({
   search: z.string().trim().min(1).max(32).optional(),
   type: z.string().trim().min(1).max(20).optional(),
   legendaryOnly: z.boolean().default(false),
-  limit: z.number().int().min(1).max(30).default(30),
+  limit: z.number().int().min(1).max(1200).default(1200),
 });
 
 const teamBuilderSchema = z.object({
-  battleStyle: z
-    .enum(["balanced", "offense", "defense", "speed"])
-    .default("balanced"),
-  preferredType: z.string().trim().min(1).max(20).optional(),
-  allowLegendary: z.boolean().default(false),
-  limit: z.number().int().min(3).max(6).default(6),
+  type: z.string().trim().min(1).max(20).optional(),
 });
 
 export const pokedexRouter = {
@@ -522,15 +504,14 @@ export const pokedexRouter = {
   teamBuilder: publicProcedure
     .input(teamBuilderSchema)
     .handler(async ({ input }) => {
-      const preferredType = input.preferredType?.trim().toLowerCase() || null;
-      const hasPreferredType = preferredType !== null;
-      const preferredTypeValue = preferredType ?? "";
+      const filterType = input.type?.trim().toLowerCase() || null;
+      const hasTypeFilter = filterType !== null;
+      const typeValue = filterType ?? "";
 
-      // Low-level raw SQL plan that uses CTEs + window functions to generate a balanced team draft.
+      // Low-level raw SQL plan — showcases db.sql.raw with CTEs + window functions.
       const plan = db.sql.raw`
-      WITH candidate_pool AS (
+      WITH scored AS (
         SELECT
-          p.id,
           p."dexNumber",
           p.name,
           p."primaryType",
@@ -540,58 +521,26 @@ export const pokedexRouter = {
           p.defense,
           p.speed,
           p."isLegendary",
-          (
-            CASE
-              WHEN ${input.battleStyle} = 'offense' THEN p.attack * 0.48 + p.speed * 0.27 + p.hp * 0.15 + p.defense * 0.10
-              WHEN ${input.battleStyle} = 'defense' THEN p.defense * 0.45 + p.hp * 0.30 + p.attack * 0.15 + p.speed * 0.10
-              WHEN ${input.battleStyle} = 'speed' THEN p.speed * 0.50 + p.attack * 0.25 + p.hp * 0.15 + p.defense * 0.10
-              ELSE (p.attack + p.defense + p.speed + p.hp) / 4.0
-            END
-          ) AS "battleScore",
-          CASE
-            WHEN p.speed >= p.attack AND p.speed >= p.defense THEN 'Closer'
-            WHEN p.defense >= p.attack AND p.defense >= p.speed THEN 'Tank'
-            ELSE 'Bruiser'
-          END AS "teamRole"
-        FROM "pokemon" p
-        WHERE (${input.allowLegendary} = TRUE OR p."isLegendary" = FALSE)
-          AND (
-            ${hasPreferredType} = FALSE
-            OR lower(p."primaryType") = ${preferredTypeValue}
-            OR lower(coalesce(p."secondaryType", '')) = ${preferredTypeValue}
-          )
-      ),
-      ranked AS (
-        SELECT
-          cp.*,
+          (p.hp + p.attack + p.defense + p.speed) AS "totalStats",
           row_number() OVER (
-            PARTITION BY cp."primaryType"
-            ORDER BY cp."battleScore" DESC, cp.speed DESC, cp.attack DESC
-          ) AS "typeRank",
-          dense_rank() OVER (
-            ORDER BY cp."battleScore" DESC
-          ) AS "overallRank"
-        FROM candidate_pool cp
-      ),
-      team AS (
-        SELECT *
-        FROM ranked
-        WHERE "typeRank" <= 2
-        ORDER BY "battleScore" DESC, speed DESC, attack DESC
-        LIMIT ${input.limit}
+            PARTITION BY p."primaryType"
+            ORDER BY (p.hp + p.attack + p.defense + p.speed) DESC
+          ) AS "typeRank"
+        FROM "pokemon" p
+        WHERE (
+          ${hasTypeFilter} = FALSE
+          OR lower(p."primaryType") = ${typeValue}
+          OR lower(coalesce(p."secondaryType", '')) = ${typeValue}
+        )
       )
-      SELECT
-        t.*,
-        (
-          SELECT count(DISTINCT t2."primaryType")
-          FROM team t2
-        ) AS "uniquePrimaryTypes"
-      FROM team t
-      ORDER BY t."battleScore" DESC, t.speed DESC, t.attack DESC;
+      SELECT *
+      FROM scored
+      WHERE "typeRank" <= 2
+      ORDER BY "totalStats" DESC
+      LIMIT 6;
     `;
 
       const rows = (await executeLowLevelPlan(plan)) as Array<{
-        id: number;
         dexNumber: number;
         name: string;
         primaryType: string;
@@ -601,62 +550,12 @@ export const pokedexRouter = {
         defense: number;
         speed: number;
         isLegendary: boolean;
-        battleScore: number | string;
-        teamRole: string;
-        typeRank: number | string;
-        overallRank: number | string;
-        uniquePrimaryTypes: number | string;
+        totalStats: number | string;
       }>;
 
-      const picks = rows.map((row) => ({
-        id: row.id,
-        dexNumber: row.dexNumber,
-        name: row.name,
-        primaryType: row.primaryType,
-        secondaryType: row.secondaryType,
-        hp: row.hp,
-        attack: row.attack,
-        defense: row.defense,
-        speed: row.speed,
-        isLegendary: row.isLegendary,
-        battleScore: Number(normalizeNumber(row.battleScore).toFixed(1)),
-        teamRole: row.teamRole,
-        typeRank: Math.round(normalizeNumber(row.typeRank)),
-        overallRank: Math.round(normalizeNumber(row.overallRank)),
+      return rows.map((row) => ({
+        ...row,
+        totalStats: Number(row.totalStats),
       }));
-
-      const typeCoverage = new Set<string>();
-      for (const pick of picks) {
-        typeCoverage.add(pick.primaryType);
-        if (pick.secondaryType) {
-          typeCoverage.add(pick.secondaryType);
-        }
-      }
-
-      return {
-        summary: {
-          battleStyle: input.battleStyle,
-          preferredType,
-          requestedSize: input.limit,
-          generatedSize: picks.length,
-          uniquePrimaryTypes: rows[0]
-            ? Math.round(normalizeNumber(rows[0].uniquePrimaryTypes))
-            : 0,
-          averageBattleScore:
-            picks.length === 0
-              ? 0
-              : Number(
-                  (
-                    picks.reduce((total, pick) => total + pick.battleScore, 0) /
-                    picks.length
-                  ).toFixed(1),
-                ),
-          legendaryCount: picks.filter((pick) => pick.isLegendary).length,
-          typeCoverage: Array.from(typeCoverage).sort((a, b) =>
-            a.localeCompare(b),
-          ),
-        },
-        picks,
-      };
     }),
 };

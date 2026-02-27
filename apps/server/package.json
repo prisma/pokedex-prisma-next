@@ -10,14 +10,9 @@
     "start": "bun run dist/index.mjs"
   },
   "dependencies": {
-    "@orpc/openapi": "catalog:",
     "@orpc/server": "catalog:",
-    "@orpc/zod": "catalog:",
     "@pokedex/api": "workspace:*",
-    "@pokedex/auth": "workspace:*",
-    "@pokedex/db": "workspace:*",
     "@pokedex/env": "workspace:*",
-    "better-auth": "catalog:",
     "dotenv": "catalog:",
     "hono": "catalog:",
     "zod": "catalog:"

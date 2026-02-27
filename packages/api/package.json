@@ -12,10 +12,7 @@
   "scripts": {},
   "dependencies": {
     "@orpc/client": "catalog:",
-    "@orpc/openapi": "catalog:",
     "@orpc/server": "catalog:",
-    "@orpc/zod": "catalog:",
-    "@pokedex/auth": "workspace:*",
     "@pokedex/db": "workspace:*",
     "@pokedex/env": "workspace:*",
     "dotenv": "catalog:",
@@ -23,7 +20,6 @@
   },
   "devDependencies": {
     "@pokedex/config": "workspace:*",
-    "hono": "catalog:",
     "typescript": "catalog:"
   }
 }

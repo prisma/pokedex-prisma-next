@@ -1,11 +1,7 @@
-import { OpenAPIHandler } from "@orpc/openapi/fetch";
-import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
 import { onError } from "@orpc/server";
 import { RPCHandler } from "@orpc/server/fetch";
-import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
 import { createContext } from "@pokedex/api/context";
 import { appRouter } from "@pokedex/api/routers/index";
-import { auth } from "@pokedex/auth";
 import { env } from "@pokedex/env/server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
@@ -19,27 +15,12 @@ app.use(
   cors({
     origin: env.CORS_ORIGIN,
     allowMethods: ["GET", "POST", "OPTIONS"],
-    allowHeaders: ["Content-Type", "Authorization"],
+    allowHeaders: ["Content-Type"],
     credentials: true,
   }),
 );
 
-app.on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw));
-
-export const apiHandler = new OpenAPIHandler(appRouter, {
-  plugins: [
-    new OpenAPIReferencePlugin({
-      schemaConverters: [new ZodToJsonSchemaConverter()],
-    }),
-  ],
-  interceptors: [
-    onError((error) => {
-      console.error(error);
-    }),
-  ],
-});
-
-export const rpcHandler = new RPCHandler(appRouter, {
+const rpcHandler = new RPCHandler(appRouter, {
   interceptors: [
     onError((error) => {
       console.error(error);
@@ -48,7 +29,7 @@ export const rpcHandler = new RPCHandler(appRouter, {
 });
 
 app.use("/*", async (c, next) => {
-  const context = await createContext({ context: c });
+  const context = await createContext();
 
   const rpcResult = await rpcHandler.handle(c.req.raw, {
     prefix: "/rpc",
@@ -57,15 +38,6 @@ app.use("/*", async (c, next) => {
 
   if (rpcResult.matched) {
     return c.newResponse(rpcResult.response.body, rpcResult.response);
-  }
-
-  const apiResult = await apiHandler.handle(c.req.raw, {
-    prefix: "/api-reference",
-    context: context,
-  });
-
-  if (apiResult.matched) {
-    return c.newResponse(apiResult.response.body, apiResult.response);
   }
 
   await next();

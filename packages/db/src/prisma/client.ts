@@ -27,11 +27,6 @@ type PrismaModelDelegate = {
 };
 
 type PrismaModelDelegates = {
-  user: PrismaModelDelegate;
-  session: PrismaModelDelegate;
-  account: PrismaModelDelegate;
-  verification: PrismaModelDelegate;
-  todo: PrismaModelDelegate;
   pokemon: PrismaModelDelegate;
   spawnPoint: PrismaModelDelegate;
 };

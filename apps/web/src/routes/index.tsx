@@ -70,10 +70,7 @@ type PokedexPokemon = {
   spawnPoints: SpawnPoint[];
 };
 
-type TeamBattleStyle = "balanced" | "offense" | "defense" | "speed";
-
-type TeamBuilderPick = {
-  id: number;
+type TeamPick = {
   dexNumber: number;
   name: string;
   primaryType: string;
@@ -83,24 +80,7 @@ type TeamBuilderPick = {
   defense: number;
   speed: number;
   isLegendary: boolean;
-  battleScore: number;
-  teamRole: string;
-  typeRank: number;
-  overallRank: number;
-};
-
-type TeamBuilderResult = {
-  summary: {
-    battleStyle: TeamBattleStyle;
-    preferredType: string | null;
-    requestedSize: number;
-    generatedSize: number;
-    uniquePrimaryTypes: number;
-    averageBattleScore: number;
-    legendaryCount: number;
-    typeCoverage: string[];
-  };
-  picks: TeamBuilderPick[];
+  totalStats: number;
 };
 
 function PokedexRoute() {
@@ -110,11 +90,7 @@ function PokedexRoute() {
   const [selectedDexNumber, setSelectedDexNumber] = useState<number | null>(
     null,
   );
-
-  const [battleStyle, setBattleStyle] = useState<TeamBattleStyle>("balanced");
-  const [preferredType, setPreferredType] = useState("");
-  const [allowLegendaryTeam, setAllowLegendaryTeam] = useState(false);
-  const [teamSize, setTeamSize] = useState(6);
+  const [teamType, setTeamType] = useState("");
 
   const listQuery = useQuery(
     orpc.pokedex.listPokemon.queryOptions({
@@ -122,7 +98,7 @@ function PokedexRoute() {
         search: search.trim() || undefined,
         type: type.trim() || undefined,
         legendaryOnly,
-        limit: 30,
+        limit: 1200,
       },
     }),
   );
@@ -142,13 +118,10 @@ function PokedexRoute() {
     orpc.pokedex.typeBreakdown.queryOptions(),
   );
 
-  const teamBuilderQuery = useQuery(
+  const teamQuery = useQuery(
     orpc.pokedex.teamBuilder.queryOptions({
       input: {
-        battleStyle,
-        preferredType: preferredType.trim() || undefined,
-        allowLegendary: allowLegendaryTeam,
-        limit: teamSize,
+        type: teamType.trim() || undefined,
       },
     }),
   );
@@ -159,7 +132,7 @@ function PokedexRoute() {
         listQuery.refetch();
         selectedPokemonQuery.refetch();
         typeBreakdownQuery.refetch();
-        teamBuilderQuery.refetch();
+        teamQuery.refetch();
       },
     }),
   );
@@ -171,18 +144,11 @@ function PokedexRoute() {
     ? selectedPokemon.spawnPoints
     : [];
 
-  const totalPokemon = listPokemon.length;
-  const totalLegendary = listPokemon.filter(
-    (pokemon) => pokemon.isLegendary,
-  ).length;
-
   const topTypes = useMemo(() => {
     return (typeBreakdownQuery.data ?? []).slice(0, 5);
   }, [typeBreakdownQuery.data]);
 
-  const teamBuilderResult = teamBuilderQuery.data as
-    | TeamBuilderResult
-    | undefined;
+  const teamPicks = (teamQuery.data as TeamPick[] | undefined) ?? [];
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8">
@@ -191,18 +157,16 @@ function PokedexRoute() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-2xl">
               <Sparkles className="h-6 w-6" />
-              Prisma Next Pokedex Demo
+              Prisma Next Pokedex
             </CardTitle>
-            <CardDescription className="">
-              High-level query interface first, plus one low-level SQL endpoint
-              for team drafting.
+            <CardDescription>
+              High-level queries + low-level raw SQL, powered by Prisma Next.
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-wrap items-center gap-3">
             <Button
               onClick={() => seedMutation.mutate({ forceReset: false })}
               disabled={seedMutation.isPending}
-              className=" hover:opacity-90"
             >
               {seedMutation.isPending ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -214,14 +178,13 @@ function PokedexRoute() {
               variant="outline"
               onClick={() => seedMutation.mutate({ forceReset: true })}
               disabled={seedMutation.isPending}
-              className=""
             >
-              Reimport From PokeAPI
+              Reimport
             </Button>
-            <div className="text-sm ">
+            <span className="text-sm text-muted-foreground">
               {seedMutation.data?.message ??
-                "Import from PokeAPI to load the full dataset."}
-            </div>
+                "Import from PokeAPI to load the dataset."}
+            </span>
           </CardContent>
         </Card>
 
@@ -230,39 +193,31 @@ function PokedexRoute() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Database className="h-5 w-5" />
-                High-Level Query Interface
+                High-Level Queries
               </CardTitle>
               <CardDescription>
-                Filters and card data are served from
-                `prisma.pokemon.findMany(...)` with relation lookups.
+                Uses prisma.pokemon.findMany() with filters and relation lookups.
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
               <div className="grid gap-3 md:grid-cols-[2fr_1fr_auto]">
                 <Input
                   value={search}
-                  onChange={(event) => setSearch(event.target.value)}
+                  onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search by name or type"
                 />
                 <Input
                   value={type}
-                  onChange={(event) => setType(event.target.value)}
-                  placeholder="Type filter (e.g. fire)"
+                  onChange={(e) => setType(e.target.value)}
+                  placeholder="Type filter"
                 />
                 <label className="flex items-center gap-2 text-sm">
                   <Checkbox
                     checked={legendaryOnly}
-                    onCheckedChange={(checked) =>
-                      setLegendaryOnly(checked === true)
-                    }
+                    onCheckedChange={(v) => setLegendaryOnly(v === true)}
                   />
-                  Legendary only
+                  Legendary
                 </label>
-              </div>
-
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <span>Total listed: {totalPokemon}</span>
-                <span>Legendary listed: {totalLegendary}</span>
               </div>
 
               {listQuery.isLoading ? (
@@ -270,6 +225,7 @@ function PokedexRoute() {
                   <Loader2 className="h-6 w-6 animate-spin" />
                 </div>
               ) : listPokemon.length > 0 ? (
+                <div className="max-h-[600px] overflow-y-auto rounded-md border p-2">
                 <div className="grid gap-3 md:grid-cols-2">
                   {listPokemon.map((pokemon) => (
                     <button
@@ -288,17 +244,13 @@ function PokedexRoute() {
                           </div>
                           <div className="mt-1 flex flex-wrap gap-2">
                             <span
-                              className={`rounded-full px-2 py-0.5 text-xs font-medium ${typeBadgeClass(
-                                pokemon.primaryType,
-                              )}`}
+                              className={`rounded-full px-2 py-0.5 text-xs font-medium ${typeBadgeClass(pokemon.primaryType)}`}
                             >
                               {pokemon.primaryType}
                             </span>
                             {pokemon.secondaryType ? (
                               <span
-                                className={`rounded-full px-2 py-0.5 text-xs font-medium ${typeBadgeClass(
-                                  pokemon.secondaryType,
-                                )}`}
+                                className={`rounded-full px-2 py-0.5 text-xs font-medium ${typeBadgeClass(pokemon.secondaryType)}`}
                               >
                                 {pokemon.secondaryType}
                               </span>
@@ -321,6 +273,7 @@ function PokedexRoute() {
                     </button>
                   ))}
                 </div>
+                </div>
               ) : (
                 <div className="rounded-md border border-dashed p-6 text-center text-sm text-muted-foreground">
                   No Pokemon yet. Click Import Pokemon above.
@@ -334,7 +287,7 @@ function PokedexRoute() {
               <CardHeader>
                 <CardTitle>Selected Pokemon</CardTitle>
                 <CardDescription>
-                  Includes spawn points via relation include.
+                  Via findUnique + spawn point relations.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -366,9 +319,9 @@ function PokedexRoute() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Type Meta</CardTitle>
+                <CardTitle>Type Breakdown</CardTitle>
                 <CardDescription>
-                  Computed from high-level reads.
+                  Aggregated from high-level reads.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -394,125 +347,70 @@ function PokedexRoute() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Swords className="h-5 w-5" />
-              Low-Level Query API
+              Raw SQL — Team Builder
             </CardTitle>
             <CardDescription>
-              Team Builder Analyzer uses `db.sql.raw` with CTEs + window
-              functions for ranked picks.
+              Uses db.sql.raw with a CTE + window function to pick the top 6
+              strongest Pokemon across types.
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">
-            <div className="grid gap-3 md:grid-cols-3">
+            <div className="flex items-center gap-3">
               <Input
-                value={preferredType}
-                onChange={(event) => setPreferredType(event.target.value)}
-                placeholder="Preferred type (optional)"
+                value={teamType}
+                onChange={(e) => setTeamType(e.target.value)}
+                placeholder="Filter by type (optional)"
+                className="max-w-xs"
               />
-              <Input
-                type="number"
-                min="3"
-                max="6"
-                value={teamSize}
-                onChange={(event) => {
-                  const nextValue = Number(event.target.value);
-                  if (!Number.isFinite(nextValue)) {
-                    return;
-                  }
-                  setTeamSize(Math.max(3, Math.min(6, Math.round(nextValue))));
-                }}
-                placeholder="Team size (3-6)"
-              />
-              <label className="flex items-center gap-2 text-sm">
-                <Checkbox
-                  checked={allowLegendaryTeam}
-                  onCheckedChange={(checked) =>
-                    setAllowLegendaryTeam(checked === true)
-                  }
-                />
-                Allow legendary
-              </label>
+              {teamQuery.isFetching && (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              )}
             </div>
 
-            <div className="flex flex-wrap gap-2">
-              {(
-                ["balanced", "offense", "defense", "speed"] as TeamBattleStyle[]
-              ).map((style) => (
-                <Button
-                  key={style}
-                  variant={battleStyle === style ? "default" : "outline"}
-                  onClick={() => setBattleStyle(style)}
-                >
-                  {style}
-                </Button>
-              ))}
-              <Button
-                variant="secondary"
-                onClick={() => teamBuilderQuery.refetch()}
-                disabled={teamBuilderQuery.isFetching}
-              >
-                {teamBuilderQuery.isFetching ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  "Refresh analysis"
-                )}
-              </Button>
-            </div>
-
-            {teamBuilderResult && teamBuilderResult.picks.length > 0 ? (
-              <div className="grid gap-2 md:grid-cols-2">
-                {teamBuilderResult.picks.map((row) => (
-                  <div key={row.id} className="rounded-md border p-3 text-sm">
+            {teamPicks.length > 0 ? (
+              <div className="grid gap-2 md:grid-cols-3">
+                {teamPicks.map((pick) => (
+                  <div
+                    key={pick.dexNumber}
+                    className="rounded-md border p-3 text-sm"
+                  >
                     <div className="font-medium">
-                      {row.name} · #{row.dexNumber}
+                      {pick.name}{" "}
+                      <span className="text-muted-foreground">
+                        #{pick.dexNumber}
+                      </span>
                     </div>
                     <div className="mt-1 flex flex-wrap gap-1">
                       <span
-                        className={`rounded-full px-2 py-0.5 text-xs font-medium ${typeBadgeClass(row.primaryType)}`}
+                        className={`rounded-full px-2 py-0.5 text-xs font-medium ${typeBadgeClass(pick.primaryType)}`}
                       >
-                        {row.primaryType}
+                        {pick.primaryType}
                       </span>
-                      {row.secondaryType ? (
+                      {pick.secondaryType ? (
                         <span
-                          className={`rounded-full px-2 py-0.5 text-xs font-medium ${typeBadgeClass(row.secondaryType)}`}
+                          className={`rounded-full px-2 py-0.5 text-xs font-medium ${typeBadgeClass(pick.secondaryType)}`}
                         >
-                          {row.secondaryType}
+                          {pick.secondaryType}
                         </span>
                       ) : null}
                     </div>
-                    <div className="mt-1 text-xs text-muted-foreground">
-                      role {row.teamRole} · score {row.battleScore} · rank{" "}
-                      {row.overallRank}
+                    <div className="mt-2 grid grid-cols-4 gap-2 text-xs">
+                      <StatLabel label="HP" value={pick.hp} />
+                      <StatLabel label="ATK" value={pick.attack} />
+                      <StatLabel label="DEF" value={pick.defense} />
+                      <StatLabel label="SPD" value={pick.speed} />
                     </div>
-                    <div className="mt-2 grid grid-cols-4 gap-2 text-[10px]">
-                      <StatLabel label="HP" value={row.hp} />
-                      <StatLabel label="ATK" value={row.attack} />
-                      <StatLabel label="DEF" value={row.defense} />
-                      <StatLabel label="SPD" value={row.speed} />
+                    <div className="mt-1 text-xs text-muted-foreground text-right">
+                      total: {pick.totalStats}
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
               <div className="text-sm text-muted-foreground">
-                No team draft available for this filter. Try a different style
-                or type.
+                No results. Import Pokemon first.
               </div>
             )}
-
-            {teamBuilderResult ? (
-              <div className="rounded-md border border-dashed p-3 text-sm text-muted-foreground">
-                Style: {teamBuilderResult.summary.battleStyle} · Team:{" "}
-                {teamBuilderResult.summary.generatedSize}/
-                {teamBuilderResult.summary.requestedSize} · Avg score:{" "}
-                {teamBuilderResult.summary.averageBattleScore}
-                {" · "}Unique primary types:{" "}
-                {teamBuilderResult.summary.uniquePrimaryTypes}
-                {" · "}Legendary picks:{" "}
-                {teamBuilderResult.summary.legendaryCount}
-                {" · "}Coverage:{" "}
-                {teamBuilderResult.summary.typeCoverage.join(", ") || "none"}
-              </div>
-            ) : null}
           </CardContent>
         </Card>
       </div>
