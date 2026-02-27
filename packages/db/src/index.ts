@@ -1,9 +1,9 @@
 import { Collection, or, orm } from "@prisma-next/sql-orm-client";
 import type { Runtime } from "@prisma-next/sql-runtime";
 import type { Contract } from "./prisma/contract.d";
-import { db, getRuntime } from "./prisma/db";
+import { db } from "./prisma/db";
 
-export { db, getRuntime };
+export { db };
 
 const contract = db.context.contract as Contract;
 
@@ -30,7 +30,6 @@ class PokemonCollection extends Collection<Contract, "Pokemon"> {
   }
 
   withSpawnPoints() {
-    // @ts-expect-error — relation types don't resolve with complex contracts
     return this.include("spawnPoints", (sp: any) =>
       sp.orderBy((s: any) => s.encounterRate.desc()),
     );

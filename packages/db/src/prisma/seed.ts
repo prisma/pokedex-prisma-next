@@ -1,6 +1,6 @@
 import { all } from "@prisma-next/sql-orm-client";
 import { createOrmClient } from "../index";
-import { getRuntime } from "./db";
+import { db } from "./db";
 
 const POKEAPI = "https://pokeapi.co/api/v2";
 export const MAX_POKEMON = 1025;
@@ -55,7 +55,7 @@ async function fetchPokemon(dexNumber: number) {
 }
 
 export async function seedDatabase(limit: number, forceReset: boolean) {
-  const client = createOrmClient(await getRuntime());
+  const client = createOrmClient(db.runtime());
   const pokemon_ = client.pokemon!;
   const spawnPoints_ = client.spawnPoints!;
 

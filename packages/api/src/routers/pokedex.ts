@@ -1,5 +1,5 @@
 import { or } from "@prisma-next/sql-orm-client";
-import { createOrmClient, db, getRuntime } from "@pokedex/db";
+import { createOrmClient, db } from "@pokedex/db";
 import { MAX_POKEMON, seedDatabase } from "@pokedex/db/prisma/seed";
 import z from "zod";
 
@@ -29,7 +29,7 @@ export const pokedexRouter = {
   listPokemon: publicProcedure
     .input(listPokemonSchema)
     .handler(async ({ input }) => {
-      const client = createOrmClient(await getRuntime());
+      const client = createOrmClient(db.runtime());
       const pokemon = client.pokemon!;
 
       let query = pokemon.orderBy((p: any) => p.dexNumber.asc());
@@ -57,9 +57,7 @@ export const pokedexRouter = {
         );
       }
 
-      const withSpawns = query
-        // @ts-expect-error — relation types don't resolve with complex contracts
-        .include("spawnPoints", (sp: any) => sp);
+      const withSpawns = query.include("spawnPoints", (sp: any) => sp);
 
       const rows = await withSpawns.take(input.limit).all();
 
@@ -69,11 +67,10 @@ export const pokedexRouter = {
   byDexNumber: publicProcedure
     .input(z.object({ dexNumber: z.number().int().min(1).max(9999) }))
     .handler(async ({ input }) => {
-      const client = createOrmClient(await getRuntime());
+      const client = createOrmClient(db.runtime());
 
       const pokemon = await client
         .pokemon!.where({ dexNumber: input.dexNumber })
-        // @ts-expect-error — relation types don't resolve with complex contracts
         .include("spawnPoints", (sp: any) =>
           sp.orderBy((s: any) => s.encounterRate.desc()),
         )
@@ -83,7 +80,7 @@ export const pokedexRouter = {
     }),
 
   typeBreakdown: publicProcedure.handler(async () => {
-    const client = createOrmClient(await getRuntime());
+    const client = createOrmClient(db.runtime());
 
     const allPokemon = await client
       .pokemon!.select("primaryType", "secondaryType", "isLegendary")
@@ -130,7 +127,8 @@ export const pokedexRouter = {
     .input(teamBuilderSchema)
     .handler(async ({ input }) => {
       const filterType = input.type?.trim().toLowerCase() || null;
-      const kysely = (await db.kysely()) as any;
+      const runtime = db.runtime();
+      const kysely = db.kysely(runtime);
 
       let query = kysely
         .selectFrom("pokemon")
