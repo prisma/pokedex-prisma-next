@@ -80,37 +80,57 @@ export const pokedexRouter = {
 
   typeBreakdown: publicProcedure.handler(async () => {
     const client = createOrmClient(db.runtime());
+    const pokemon = client.pokemon!;
 
-    const allPokemon = await client
-      .pokemon!.select("primaryType", "secondaryType", "isLegendary")
-      .all();
+    const [primaryTotal, primaryLegendary, secondaryTotal, secondaryLegendary] =
+      await Promise.all([
+        pokemon.groupBy("primaryType").aggregate((agg) => ({
+          total: agg.count(),
+        })),
+        pokemon
+          .where({ isLegendary: true })
+          .groupBy("primaryType")
+          .aggregate((agg) => ({ legendary: agg.count() })),
+        pokemon.groupBy("secondaryType").aggregate((agg) => ({
+          total: agg.count(),
+        })),
+        pokemon
+          .where({ isLegendary: true })
+          .groupBy("secondaryType")
+          .aggregate((agg) => ({ legendary: agg.count() })),
+      ]);
 
     const breakdown = new Map<
       string,
       { type: string; total: number; legendary: number }
     >();
 
-    const upsertType = (typeValue: string, isLegendary: boolean) => {
-      const existing = breakdown.get(typeValue);
-      if (!existing) {
-        breakdown.set(typeValue, {
-          type: typeValue,
-          total: 1,
-          legendary: isLegendary ? 1 : 0,
-        });
-        return;
-      }
-
-      existing.total += 1;
-      if (isLegendary) {
-        existing.legendary += 1;
+    const merge = (type: string, total: number, legendary: number) => {
+      const existing = breakdown.get(type);
+      if (existing) {
+        existing.total += total;
+        existing.legendary += legendary;
+      } else {
+        breakdown.set(type, { type, total, legendary });
       }
     };
 
-    for (const row of allPokemon) {
-      upsertType(row.primaryType, row.isLegendary);
-      if (row.secondaryType) {
-        upsertType(row.secondaryType, row.isLegendary);
+    for (const row of primaryTotal) {
+      merge(row.primaryType, row.total, 0);
+    }
+    for (const row of primaryLegendary) {
+      const existing = breakdown.get(row.primaryType);
+      if (existing) existing.legendary = row.legendary;
+    }
+    for (const row of secondaryTotal) {
+      if (row.secondaryType != null) {
+        merge(row.secondaryType, row.total, 0);
+      }
+    }
+    for (const row of secondaryLegendary) {
+      if (row.secondaryType != null) {
+        const existing = breakdown.get(row.secondaryType);
+        if (existing) existing.legendary += row.legendary;
       }
     }
 

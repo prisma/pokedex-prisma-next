@@ -321,7 +321,7 @@ function PokedexRoute() {
               <CardHeader>
                 <CardTitle>Type Breakdown</CardTitle>
                 <CardDescription>
-                  Aggregated from high-level reads.
+                  Via groupBy().aggregate() ORM queries.
                 </CardDescription>
               </CardHeader>
               <CardContent>
