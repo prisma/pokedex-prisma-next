@@ -139,63 +139,62 @@ function PokedexRoute() {
           </CardContent>
         </Card>
 
-        <div className="sticky top-0 z-10 -mx-4 bg-background px-4 py-3">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Database className="h-5 w-5" />
-                High-Level Queries
-              </CardTitle>
-              <CardDescription>
-                Uses pokemon.where().include().all() with filters and relation lookups.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-4">
-              <div className="grid gap-3 md:grid-cols-[2fr_1fr_auto]">
-                <Input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search by name or type"
-                />
-                <Input
-                  value={type}
-                  onChange={(e) => setType(e.target.value)}
-                  placeholder="Type filter"
-                />
-                <label className="flex items-center gap-2 text-sm">
-                  <Checkbox
-                    checked={legendaryOnly}
-                    onCheckedChange={(v) => setLegendaryOnly(v === true)}
-                  />
-                  Legendary
-                </label>
-              </div>
-              <div className="flex items-center gap-3">
-                <label className="text-sm text-muted-foreground whitespace-nowrap">
-                  Stream delay: {delayMs}ms
-                </label>
-                <input
-                  type="range"
-                  min={0}
-                  max={100}
-                  value={delayMs}
-                  onChange={(e) => setDelayMs(Number(e.target.value))}
-                  className="w-40"
-                />
-              </div>
-
-              {listQuery.isFetching && listPokemon.length > 0 && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Streaming... {listPokemon.length} pokemon loaded
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
         <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
-          <div>
+          <div className="grid gap-6">
+            <div className="sticky top-0 z-10 bg-background pb-3">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Database className="h-5 w-5" />
+                    High-Level Queries
+                  </CardTitle>
+                  <CardDescription>
+                    Uses pokemon.where().include().all() with filters and relation lookups.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="grid gap-4">
+                  <div className="grid gap-3 md:grid-cols-[2fr_1fr_auto]">
+                    <Input
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      placeholder="Search by name or type"
+                    />
+                    <Input
+                      value={type}
+                      onChange={(e) => setType(e.target.value)}
+                      placeholder="Type filter"
+                    />
+                    <label className="flex items-center gap-2 text-sm">
+                      <Checkbox
+                        checked={legendaryOnly}
+                        onCheckedChange={(v) => setLegendaryOnly(v === true)}
+                      />
+                      Legendary
+                    </label>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <label className="text-sm text-muted-foreground whitespace-nowrap">
+                      Stream delay: {delayMs}ms
+                    </label>
+                    <input
+                      type="range"
+                      min={0}
+                      max={100}
+                      value={delayMs}
+                      onChange={(e) => setDelayMs(Number(e.target.value))}
+                      className="w-40"
+                    />
+                  </div>
+
+                  {listQuery.isFetching && listPokemon.length > 0 && (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Streaming... {listPokemon.length} pokemon loaded
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
 
               {listQuery.isLoading ? (
                 <div className="flex justify-center py-8">
@@ -258,7 +257,7 @@ function PokedexRoute() {
               )}
           </div>
 
-          <div className="grid gap-6 self-start sticky top-8">
+          <div className="grid gap-6 self-start sticky top-0">
             <Card>
               <CardHeader>
                 <CardTitle>Selected Pokemon</CardTitle>
