@@ -15,6 +15,7 @@ const listPokemonSchema = z.object({
   type: z.string().trim().min(1).max(20).optional(),
   legendaryOnly: z.boolean().default(false),
   limit: z.number().int().min(1).max(1200).default(1200),
+  delayMs: z.number().int().min(0).max(100).default(0),
 });
 
 const teamBuilderSchema = z.object({
@@ -28,7 +29,7 @@ export const pokedexRouter = {
 
   listPokemon: publicProcedure
     .input(listPokemonSchema)
-    .handler(async ({ input }) => {
+    .handler(async function* ({ input }) {
       const client = createOrmClient(db.runtime());
       let query = client.pokemon!.orderBy((p) => p.dexNumber.asc());
 
@@ -55,12 +56,16 @@ export const pokedexRouter = {
         );
       }
 
-      const rows = await query
+      const delayMs = input.delayMs;
+      for await (const row of query
         .include("spawnPoints", (sp) => sp)
         .take(input.limit)
-        .all();
-
-      return [...rows];
+        .all()) {
+        yield row;
+        if (delayMs > 0) {
+          await new Promise((resolve) => setTimeout(resolve, delayMs));
+        }
+      }
     }),
 
   byDexNumber: publicProcedure
