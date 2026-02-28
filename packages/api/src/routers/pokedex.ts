@@ -125,7 +125,10 @@ export const pokedexRouter = {
   teamBuilder: publicProcedure
     .input(teamBuilderSchema)
     .handler(async ({ input }) => {
-      const filterType = input.type?.trim().toLowerCase() || null;
+      const trimmed = input.type?.trim() || null;
+      const filterType = trimmed
+        ? trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase()
+        : null;
       const runtime = db.runtime();
       const kysely = db.kysely(runtime);
 
@@ -146,8 +149,8 @@ export const pokedexRouter = {
       if (filterType) {
         query = query.where((eb) =>
           eb.or([
-            eb(eb.fn("lower", ["primaryType"]), "=", filterType),
-            eb(eb.fn("lower", ["secondaryType"]), "=", filterType),
+            eb("primaryType", "=", filterType),
+            eb("secondaryType", "=", filterType),
           ]),
         );
       }

@@ -64,19 +64,19 @@ async function fetchPokemon(dexNumber: number) {
     poke.stats.find((s) => s.stat.name === name)?.base_stat ?? 0;
 
   return {
-    dexNumber: poke.id as number,
+    dexNumber: poke.id,
     name: titleCase(poke.name),
     primaryType: titleCase(types[0]?.type.name ?? "Unknown"),
     secondaryType: types[1]?.type.name ? titleCase(types[1].type.name) : null,
-    hp: stat("hp") as number,
-    attack: stat("attack") as number,
-    defense: stat("defense") as number,
-    speed: stat("speed") as number,
+    hp: stat("hp"),
+    attack: stat("attack"),
+    defense: stat("defense"),
+    speed: stat("speed"),
     spriteUrl:
       poke.sprites?.other?.["official-artwork"]?.front_default ??
       poke.sprites?.front_default ??
       `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${poke.id}.png`,
-    isLegendary: (species.is_legendary || species.is_mythical) as boolean,
+    isLegendary: species.is_legendary || species.is_mythical,
   };
 }
 
