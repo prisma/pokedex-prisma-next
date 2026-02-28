@@ -85,9 +85,9 @@ export async function seedDatabase(limit: number, forceReset: boolean) {
   const pokemon_ = client.pokemon!;
   const spawnPoints_ = client.spawnPoints!;
 
-  const { count } = (await pokemon_.aggregate((agg) => ({
+  const { count } = await pokemon_.aggregate((agg) => ({
     count: agg.count(),
-  }))) as { count: number };
+  }));
 
   if (count > 0 && !forceReset) {
     return { seeded: false, pokemonCount: count, message: "Already seeded." };
@@ -118,7 +118,7 @@ export async function seedDatabase(limit: number, forceReset: boolean) {
 
   // Build spawn points
   const idRows = await pokemon_.select("id", "dexNumber").all();
-  const idByDex = new Map([...idRows].map((r) => [r.dexNumber, r.id]));
+  const idByDex = new Map(idRows.map((r) => [r.dexNumber, r.id]));
 
   const spawnPoints = pokemon.map((p) => ({
     pokemonId: idByDex.get(p.dexNumber)!,

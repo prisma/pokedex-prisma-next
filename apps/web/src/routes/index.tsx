@@ -20,30 +20,6 @@ export const Route = createFileRoute("/")({
   component: PokedexRoute,
 });
 
-type SpawnPoint = {
-  id: number;
-  label: string;
-  region: string;
-  latitude: number;
-  longitude: number;
-  encounterRate: number;
-};
-
-type PokedexPokemon = {
-  id: number;
-  dexNumber: number;
-  name: string;
-  primaryType: string;
-  secondaryType: string | null;
-  hp: number;
-  attack: number;
-  defense: number;
-  speed: number;
-  spriteUrl: string;
-  isLegendary: boolean;
-  spawnPoints: SpawnPoint[];
-};
-
 function PokedexRoute() {
   const [search, setSearch] = useState("");
   const [type, setType] = useState("");
@@ -65,8 +41,7 @@ function PokedexRoute() {
     }),
   );
 
-  const listPokemon =
-    (listQuery.data as unknown as PokedexPokemon[] | undefined) ?? [];
+  const listPokemon = listQuery.data ?? [];
   const selectedDex = selectedDexNumber ?? listPokemon[0]?.dexNumber ?? null;
 
   const selectedPokemonQuery = useQuery({
@@ -90,12 +65,8 @@ function PokedexRoute() {
     }),
   );
 
-  const selectedPokemon = selectedPokemonQuery.data as
-    | (PokedexPokemon & { spawnPoints?: SpawnPoint[] })
-    | undefined;
-  const selectedSpawnPoints = Array.isArray(selectedPokemon?.spawnPoints)
-    ? selectedPokemon.spawnPoints
-    : [];
+  const selectedPokemon = selectedPokemonQuery.data;
+  const selectedSpawnPoints = selectedPokemon?.spawnPoints ?? [];
 
   const topTypes = useMemo(() => {
     return (typeBreakdownQuery.data ?? []).slice(0, 5);
@@ -111,7 +82,8 @@ function PokedexRoute() {
               Prisma Next Pokedex
             </CardTitle>
             <CardDescription>
-              High-level ORM queries + low-level Kysely DSL, powered by Prisma Next.
+              High-level ORM queries + low-level Kysely DSL, powered by Prisma
+              Next.
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-wrap items-center gap-3">
@@ -149,7 +121,8 @@ function PokedexRoute() {
                     High-Level Queries
                   </CardTitle>
                   <CardDescription>
-                    Uses pokemon.where().include().all() with filters and relation lookups.
+                    Uses pokemon.where().include().all() with filters and
+                    relation lookups.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-4">
@@ -196,12 +169,12 @@ function PokedexRoute() {
               </Card>
             </div>
 
-              {listQuery.isLoading ? (
-                <div className="flex justify-center py-8">
-                  <Loader2 className="h-6 w-6 animate-spin" />
-                </div>
-              ) : listPokemon.length > 0 ? (
-                <div className="rounded-md border p-2">
+            {listQuery.isLoading ? (
+              <div className="flex justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin" />
+              </div>
+            ) : listPokemon.length > 0 ? (
+              <div className="rounded-md border p-2">
                 <div className="grid gap-3 md:grid-cols-2">
                   {listPokemon.map((pokemon) => (
                     <button
@@ -249,12 +222,12 @@ function PokedexRoute() {
                     </button>
                   ))}
                 </div>
-                </div>
-              ) : (
-                <div className="rounded-md border border-dashed p-6 text-center text-sm text-muted-foreground">
-                  No Pokemon yet. Click Import Pokemon above.
-                </div>
-              )}
+              </div>
+            ) : (
+              <div className="rounded-md border border-dashed p-6 text-center text-sm text-muted-foreground">
+                No Pokemon yet. Click Import Pokemon above.
+              </div>
+            )}
           </div>
 
           <div className="grid gap-6 self-start sticky top-0">
@@ -277,7 +250,7 @@ function PokedexRoute() {
                     <ul className="space-y-2 text-muted-foreground">
                       {selectedSpawnPoints
                         .slice(0, 3)
-                        .map((spawn: SpawnPoint) => (
+                        .map((spawn) => (
                           <li key={spawn.id}>
                             {spawn.label} · {spawn.region}
                           </li>

@@ -21,7 +21,6 @@
   },
   "dependencies": {
     "@prisma-next/adapter-postgres": "dev",
-    "@prisma-next/core-execution-plane": "dev",
     "@prisma-next/driver-postgres": "dev",
     "@prisma-next/integration-kysely": "dev",
     "@prisma-next/postgres": "dev",
