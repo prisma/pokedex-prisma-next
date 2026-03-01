@@ -2,8 +2,8 @@
   "schemaVersion": "1",
   "targetFamily": "sql",
   "target": "postgres",
-  "storageHash": "sha256:29e376c32fce322a97b248345781859f1f38517d44505ad3b060f61998d02179",
-  "profileHash": "sha256:f8f8f7f23ce43cd1b7344e9c97651617112e7d216338d43f071a445b1fca8627",
+  "storageHash": "sha256:d603ca0b82267377f4fd94e6c4fe5d044ad7e820cbd4a7a6f9fdb498205762d7",
+  "profileHash": "sha256:27cf0a2f9718e05d72553d6c0519ba1c2235c04fc96df2255d7a904571f47a57",
   "models": {
     "Pokemon": {
       "fields": {
@@ -42,6 +42,9 @@
         },
         "spriteUrl": {
           "column": "spriteUrl"
+        },
+        "statVector": {
+          "column": "statVector"
         },
         "updatedAt": {
           "column": "updatedAt"
@@ -145,6 +148,14 @@
           "spriteUrl": {
             "codecId": "pg/text@1",
             "nativeType": "text"
+          },
+          "statVector": {
+            "codecId": "pg/vector@1",
+            "nativeType": "vector(4)",
+            "nullable": true,
+            "typeParams": {
+              "length": 4
+            }
           },
           "updatedAt": {
             "codecId": "pg/timestamptz@1",
@@ -277,10 +288,13 @@
       "defaults.now": true,
       "jsonAgg": true,
       "lateral": true,
+      "pgvector/cosine": true,
       "returning": true
     }
   },
-  "extensionPacks": {},
+  "extensionPacks": {
+    "pgvector": {}
+  },
   "meta": {},
   "sources": {},
   "relations": {
