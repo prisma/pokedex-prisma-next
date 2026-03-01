@@ -1,3 +1,7 @@
+// Prisma Next contract — the single source of truth for the database schema.
+// Tables, columns, models, relations, and capabilities are all defined here.
+// Running `bun run db:emit` generates contract.json + contract.d.ts from this file.
+
 import type { CodecTypes } from "@prisma-next/adapter-postgres/codec-types";
 
 import {

@@ -2,10 +2,12 @@
 
 A Pokédex built to showcase **Prisma Next** — a contract-first data access layer for PostgreSQL.
 
-This demo highlights:
+## Highlights
 
-- **High-level query interface** — Prisma-like `findMany`, `findUnique`, `createMany`, etc.
-- **Low-level query API** — raw SQL plans with CTEs + window functions
+- **ORM collections with custom scopes** — chainable `.where()`, `.include()`, `.orderBy()`, reusable query fragments like `.legendary()` and `.search()`
+- **Streaming** — `.all()` returns an `AsyncIterable`, stream rows to the client as they arrive
+- **Type-safe aggregations** — `.groupBy().aggregate()` without raw SQL
+- **Kysely escape hatch** — `db.kysely()` gives a fully typed Kysely instance derived from the contract
 - **Contract-first schema** — TypeScript-defined, deterministic, machine-readable
 
 ## Quick Start
@@ -33,39 +35,76 @@ bun run dev
 
 Open the web app and click **Import Pokemon** to seed the database from PokeAPI.
 
+## Project Structure
+
+```
+apps/
+  server/          Hono + oRPC API server
+  web/             React + TanStack Router frontend
+packages/
+  api/             API router definitions (oRPC procedures)
+  db/              Prisma Next contract, runtime, ORM collections, seed
+  config/          Shared TypeScript config
+```
+
 ## Important Files
 
 | File | Purpose |
 |------|---------|
-| `packages/db/prisma/contract.ts` | Prisma Next contract (Pokemon + SpawnPoint) |
-| `packages/db/src/prisma/client.ts` | Prisma-like client delegates |
+| `packages/db/src/prisma/contract.ts` | Prisma Next contract (Pokemon + SpawnPoint tables, models, relations) |
 | `packages/db/src/prisma/db.ts` | Runtime bootstrap + connection |
-| `packages/api/src/routers/pokedex.ts` | API routes (high-level + low-level queries) |
-| `apps/web/src/routes/index.tsx` | Demo UI |
+| `packages/db/src/index.ts` | ORM collections with custom scopes (`PokemonCollection`, `SpawnPointCollection`) |
+| `packages/db/src/prisma/seed.ts` | Seed script — fetches from PokeAPI, bulk inserts with `createCount()` |
+| `packages/api/src/routers/pokedex.ts` | API routes showcasing each Prisma Next feature |
 
-## Query Interface
+## Features Demonstrated
 
-### High-level (primary)
+### ORM Collections with Custom Scopes
 
-In `packages/api/src/routers/pokedex.ts`:
+Defined in `packages/db/src/index.ts`. Collections are reusable, composable query builders — like Rails scopes:
 
-- `prisma.pokemon.findMany(...)` with filtering
-- `prisma.pokemon.findUnique(...)`
-- `prisma.pokemon.createMany(...)`
-- `prisma.spawnPoint.findMany(...)` with relation lookups
-- `prisma.*.count(...)`
+```typescript
+class PokemonCollection extends Collection<Contract, "Pokemon"> {
+  legendary()    { return this.where({ isLegendary: true }); }
+  byType(type)   { return this.where((p) => or(p.primaryType.ilike(...), ...)); }
+  search(term)   { return this.where((p) => or(p.name.ilike(...), ...)); }
+}
+```
 
-### Low-level (team builder)
+### Streaming
 
-Also in `pokedex.ts` — the `teamBuilder` route uses:
+`listPokemon` in `pokedex.ts` streams rows with `for await...of`:
 
-- `db.sql.raw` to build a raw execution plan
-- `db.runtime().connection().execute(plan)` to run it
-- SQL CTEs and window functions (`row_number`, `dense_rank`) for ranked team drafting
+```typescript
+for await (const row of query.include("spawnPoints", (sp) => sp).take(limit).all()) {
+  yield row;
+}
+```
+
+### groupBy + aggregate
+
+`typeBreakdown` runs type-safe aggregations without raw SQL:
+
+```typescript
+pokemon.groupBy("primaryType").aggregate((agg) => ({ total: agg.count() }))
+```
+
+### Kysely Escape Hatch
+
+`teamBuilder` uses `db.kysely()` for a fully typed Kysely query when the ORM isn't enough:
+
+```typescript
+const kysely = db.kysely(db.runtime());
+kysely.selectFrom("pokemon").select([...]).where(...).execute();
+```
 
 ## Scripts
 
-- `bun run db:init` — emit contract + initialize schema
-- `bun run db:emit` — emit contract artifacts
-- `bun run db:verify` — verify marker/contract compatibility
-- `bun run dev` — run web + server
+| Script | Description |
+|--------|-------------|
+| `bun run dev` | Run web + server |
+| `bun run db:init` | Emit contract + initialize schema |
+| `bun run db:emit` | Emit contract artifacts |
+| `bun run db:push` | Push schema to database |
+| `bun run db:verify` | Verify marker/contract compatibility |
+| `bun run db:studio` | Open Prisma Studio |

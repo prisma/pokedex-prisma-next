@@ -1,3 +1,8 @@
+// ORM collections — reusable, composable query scopes for each model.
+// Collections are passed to orm() to create a typed client.
+// Usage: const client = createOrmClient(db.runtime());
+//        client.pokemon.legendary().withSpawnPoints().all()
+
 import { Collection, or, orm } from "@prisma-next/sql-orm-client";
 import type { Runtime } from "@prisma-next/sql-runtime";
 import type { Contract } from "./prisma/contract.d";
