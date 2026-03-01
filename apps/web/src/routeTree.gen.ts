@@ -10,11 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TeamBuilderRouteImport } from './routes/team-builder'
+import { Route as SimilarRouteImport } from './routes/similar'
 import { Route as IndexRouteImport } from './routes/index'
 
 const TeamBuilderRoute = TeamBuilderRouteImport.update({
   id: '/team-builder',
   path: '/team-builder',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SimilarRoute = SimilarRouteImport.update({
+  id: '/similar',
+  path: '/similar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -25,27 +31,31 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/similar': typeof SimilarRoute
   '/team-builder': typeof TeamBuilderRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/similar': typeof SimilarRoute
   '/team-builder': typeof TeamBuilderRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/similar': typeof SimilarRoute
   '/team-builder': typeof TeamBuilderRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/team-builder'
+  fullPaths: '/' | '/similar' | '/team-builder'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/team-builder'
-  id: '__root__' | '/' | '/team-builder'
+  to: '/' | '/similar' | '/team-builder'
+  id: '__root__' | '/' | '/similar' | '/team-builder'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SimilarRoute: typeof SimilarRoute
   TeamBuilderRoute: typeof TeamBuilderRoute
 }
 
@@ -56,6 +66,13 @@ declare module '@tanstack/react-router' {
       path: '/team-builder'
       fullPath: '/team-builder'
       preLoaderRoute: typeof TeamBuilderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/similar': {
+      id: '/similar'
+      path: '/similar'
+      fullPath: '/similar'
+      preLoaderRoute: typeof SimilarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -70,6 +87,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SimilarRoute: SimilarRoute,
   TeamBuilderRoute: TeamBuilderRoute,
 }
 export const routeTree = rootRouteImport

@@ -1,5 +1,5 @@
 import { or } from "@prisma-next/sql-orm-client";
-import { createOrmClient, db } from "@pokedex/db";
+import { createOrmClient, db, findSimilarPokemon } from "@pokedex/db";
 import { MAX_POKEMON, seedDatabase } from "@pokedex/db/prisma/seed";
 import z from "zod";
 
@@ -219,5 +219,17 @@ export const pokedexRouter = {
       }
 
       return team;
+    }),
+
+  // ──────────────────────────────────────────────────────────────────
+  // Feature: pgvector — cosine similarity via Prisma Next raw lane
+  // The typed SQL lane currently drops vector params for cosineDistance(),
+  // so this query uses db.sql.raw while still executing on Prisma Next.
+  // Prisma 7 has no pgvector support (requires Unsupported + raw SQL).
+  // ──────────────────────────────────────────────────────────────────
+  similarPokemon: publicProcedure
+    .input(z.object({ dexNumber: z.number().int().min(1).max(9999) }))
+    .handler(async ({ input }) => {
+      return findSimilarPokemon(input.dexNumber);
     }),
 };

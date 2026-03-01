@@ -1,4 +1,5 @@
 import type { CodecTypes } from "@prisma-next/adapter-postgres/codec-types";
+import type { CodecTypes as PgvectorCodecTypes } from "@prisma-next/extension-pgvector/codec-types";
 
 import {
   boolColumn,
@@ -7,10 +8,14 @@ import {
   textColumn,
   timestamptzColumn,
 } from "@prisma-next/adapter-postgres/column-types";
+import { vector } from "@prisma-next/extension-pgvector/column-types";
+import pgvector from "@prisma-next/extension-pgvector/pack";
 import { defineContract } from "@prisma-next/sql-contract-ts/contract-builder";
 import postgresPack from "@prisma-next/target-postgres/pack";
 
-export const contract = defineContract<CodecTypes>()
+type AllCodecTypes = CodecTypes & PgvectorCodecTypes;
+
+export const contract = defineContract<AllCodecTypes>()
   .target(postgresPack)
   .table("pokemon", (t) =>
     t
@@ -27,6 +32,7 @@ export const contract = defineContract<CodecTypes>()
       .column("attack", { type: int4Column, nullable: false })
       .column("defense", { type: int4Column, nullable: false })
       .column("speed", { type: int4Column, nullable: false })
+      .column("statVector", { type: vector(4), nullable: true })
       .column("spriteUrl", { type: textColumn, nullable: false })
       .column("isLegendary", {
         type: boolColumn,
@@ -83,6 +89,7 @@ export const contract = defineContract<CodecTypes>()
       .field("attack", "attack")
       .field("defense", "defense")
       .field("speed", "speed")
+      .field("statVector", "statVector")
       .field("spriteUrl", "spriteUrl")
       .field("isLegendary", "isLegendary")
       .field("createdAt", "createdAt")
@@ -121,11 +128,13 @@ export const contract = defineContract<CodecTypes>()
         },
       }),
   )
+  .extensionPacks({ pgvector })
   .capabilities({
     postgres: {
       lateral: true,
       jsonAgg: true,
       returning: true,
+      "pgvector/cosine": true,
       "defaults.now": true,
     },
   })

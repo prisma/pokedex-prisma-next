@@ -19,6 +19,12 @@ export default function Header() {
           >
             Team Builder
           </Link>
+          <Link
+            to="/similar"
+            className="text-lg font-semibold text-muted-foreground [&.active]:text-foreground"
+          >
+            Similar
+          </Link>
         </nav>
         <ModeToggle />
       </div>

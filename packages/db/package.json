@@ -21,11 +21,13 @@
   },
   "dependencies": {
     "@prisma-next/adapter-postgres": "dev",
+    "@prisma-next/extension-pgvector": "dev",
     "@prisma-next/driver-postgres": "dev",
     "@prisma-next/integration-kysely": "dev",
     "@prisma-next/postgres": "dev",
     "@prisma-next/sql-contract": "dev",
     "@prisma-next/sql-orm-client": "dev",
+    "@prisma-next/sql-relational-core": "dev",
     "@prisma-next/sql-runtime": "dev",
     "@prisma-next/target-postgres": "dev",
     "dotenv": "catalog:",

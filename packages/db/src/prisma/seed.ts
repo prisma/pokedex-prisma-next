@@ -72,6 +72,8 @@ async function fetchPokemon(dexNumber: number) {
     attack: stat("attack"),
     defense: stat("defense"),
     speed: stat("speed"),
+    statVector:
+      `[${stat("hp")},${stat("attack")},${stat("defense")},${stat("speed")}]` as unknown as number[],
     spriteUrl:
       poke.sprites?.other?.["official-artwork"]?.front_default ??
       poke.sprites?.front_default ??
