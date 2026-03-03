@@ -36,6 +36,7 @@
     "@pokedex/config": "workspace:*",
     "@prisma-next/cli": "dev",
     "@prisma-next/family-sql": "dev",
+    "@prisma-next/sql-contract-psl": "dev",
     "@prisma-next/sql-contract-ts": "dev",
     "typescript": "catalog:"
   }

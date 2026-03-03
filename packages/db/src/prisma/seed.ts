@@ -1,6 +1,4 @@
-import { all } from "@prisma-next/sql-orm-client";
-import { createOrmClient } from "../index";
-import { db } from "./db";
+import { createOrmClient, db } from "../index";
 
 interface PokeApiType {
   slot: number;
@@ -81,11 +79,12 @@ async function fetchPokemon(dexNumber: number) {
 }
 
 export async function seedDatabase(limit: number, forceReset: boolean) {
-  const client = createOrmClient(db.runtime());
-  const pokemon_ = client.pokemon!;
-  const spawnPoints_ = client.spawnPoints!;
+  const runtime = db.runtime();
+  const k = db.kysely;
+  const client = createOrmClient(runtime);
 
-  const { count } = await pokemon_.aggregate((agg) => ({
+  // ORM aggregate works without "returning" capability
+  const { count } = await client.pokemon!.aggregate((agg) => ({
     count: agg.count(),
   }));
 
@@ -93,9 +92,10 @@ export async function seedDatabase(limit: number, forceReset: boolean) {
     return { seeded: false, pokemonCount: count, message: "Already seeded." };
   }
 
+  // Kysely deletes don't need "returning"
   if (count > 0) {
-    await spawnPoints_.where(all).deleteAll();
-    await pokemon_.where(all).deleteAll();
+    await runtime.execute(k.build(k.deleteFrom("spawnPoint"))).toArray();
+    await runtime.execute(k.build(k.deleteFrom("pokemon"))).toArray();
   }
 
   // Fetch all pokemon from PokeAPI in batches of 25
@@ -111,35 +111,41 @@ export async function seedDatabase(limit: number, forceReset: boolean) {
     pokemon.push(...results);
   }
 
-  // Insert pokemon in batches of 500
-  for (let i = 0; i < pokemon.length; i += 500) {
-    await pokemon_.createCount(pokemon.slice(i, i + 500));
+  // Kysely build-only surface only supports single-row inserts
+  for (const row of pokemon) {
+    await runtime.execute(k.build(k.insertInto("pokemon").values(row))).toArray();
   }
 
-  // Build spawn points
-  const idRows = await pokemon_.select("id", "dexNumber").all();
+  // Build spawn points — use Kysely select for id lookup
+  const idRows = await runtime
+    .execute(k.build(k.selectFrom("pokemon").select(["id", "dexNumber"])))
+    .toArray();
   const idByDex = new Map(idRows.map((r) => [r.dexNumber, r.id]));
 
-  const spawnPoints = pokemon.map((p) => ({
-    pokemonId: idByDex.get(p.dexNumber)!,
-    label: `${p.name} Habitat`,
-    region: REGIONS[(p.dexNumber - 1) % REGIONS.length]!,
-    latitude: 37.7 + ((p.dexNumber * 17) % 90) / 1000,
-    longitude: -122.4 + ((p.dexNumber * 31) % 90) / 1000,
-    encounterRate: Math.max(
-      5,
-      90 - Math.floor((p.hp + p.attack + p.defense + p.speed) / 10),
-    ),
-  }));
-
-  for (let i = 0; i < spawnPoints.length; i += 500) {
-    await spawnPoints_.createCount(spawnPoints.slice(i, i + 500));
+  for (const p of pokemon) {
+    await runtime
+      .execute(
+        k.build(
+          k.insertInto("spawnPoint").values({
+            pokemonId: idByDex.get(p.dexNumber)!,
+            label: `${p.name} Habitat`,
+            region: REGIONS[(p.dexNumber - 1) % REGIONS.length]!,
+            latitude: 37.7 + ((p.dexNumber * 17) % 90) / 1000,
+            longitude: -122.4 + ((p.dexNumber * 31) % 90) / 1000,
+            encounterRate: Math.max(
+              5,
+              90 - Math.floor((p.hp + p.attack + p.defense + p.speed) / 10),
+            ),
+          }),
+        ),
+      )
+      .toArray();
   }
 
   return {
     seeded: true,
     pokemonCount: pokemon.length,
-    spawnPointCount: spawnPoints.length,
+    spawnPointCount: pokemon.length,
     message: `Imported ${pokemon.length} Pokemon from PokeAPI.`,
   };
 }

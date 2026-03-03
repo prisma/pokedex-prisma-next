@@ -91,7 +91,6 @@
       "name": "@pokedex/db",
       "dependencies": {
         "@prisma-next/adapter-postgres": "dev",
-        "@prisma-next/core-execution-plane": "dev",
         "@prisma-next/driver-postgres": "dev",
         "@prisma-next/integration-kysely": "dev",
         "@prisma-next/postgres": "dev",
@@ -107,6 +106,7 @@
         "@pokedex/config": "workspace:*",
         "@prisma-next/cli": "dev",
         "@prisma-next/family-sql": "dev",
+        "@prisma-next/sql-contract-psl": "dev",
         "@prisma-next/sql-contract-ts": "dev",
         "typescript": "catalog:",
       },
@@ -342,59 +342,65 @@
 
     "@pokedex/db": ["@pokedex/db@workspace:packages/db"],
 
-    "@prisma-next/adapter-postgres": ["@prisma-next/adapter-postgres@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/cli": "0.3.0-dev.45", "@prisma-next/contract": "0.3.0-dev.45", "@prisma-next/contract-authoring": "0.3.0-dev.45", "@prisma-next/core-control-plane": "0.3.0-dev.45", "@prisma-next/core-execution-plane": "0.3.0-dev.45", "@prisma-next/family-sql": "0.3.0-dev.45", "@prisma-next/sql-contract": "0.3.0-dev.45", "@prisma-next/sql-contract-ts": "0.3.0-dev.45", "@prisma-next/sql-operations": "0.3.0-dev.45", "@prisma-next/sql-relational-core": "0.3.0-dev.45", "@prisma-next/sql-runtime": "0.3.0-dev.45", "@prisma-next/sql-schema-ir": "0.3.0-dev.45", "@prisma-next/utils": "0.3.0-dev.45", "ajv": "^8.17.1", "arktype": "^2.0.0" } }, "sha512-kVuGnGt4qctaBx2c545hGl8+1qJ4Xvb8XXRfLX+OiYRVQTFZ/hSVWWGx1wLMGXPA6wWltNN5XgNK11FY3Zj/RQ=="],
+    "@prisma-next/adapter-postgres": ["@prisma-next/adapter-postgres@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/cli": "0.3.0-dev.53", "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/contract-authoring": "0.3.0-dev.53", "@prisma-next/core-control-plane": "0.3.0-dev.53", "@prisma-next/core-execution-plane": "0.3.0-dev.53", "@prisma-next/family-sql": "0.3.0-dev.53", "@prisma-next/sql-contract": "0.3.0-dev.53", "@prisma-next/sql-contract-ts": "0.3.0-dev.53", "@prisma-next/sql-operations": "0.3.0-dev.53", "@prisma-next/sql-relational-core": "0.3.0-dev.53", "@prisma-next/sql-runtime": "0.3.0-dev.53", "@prisma-next/sql-schema-ir": "0.3.0-dev.53", "@prisma-next/utils": "0.3.0-dev.53", "ajv": "^8.17.1", "arktype": "^2.0.0" } }, "sha512-qytA2gHRiIRU+8UE4bmCNVrLWmIGdtUoHFUh9Dr8Y3PE3oSnfeScJEfnikGmAMQ0pLsD0Lp5YynMcW0O2iJ8QA=="],
 
-    "@prisma-next/cli": ["@prisma-next/cli@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.45", "@prisma-next/core-control-plane": "0.3.0-dev.45", "@prisma-next/emitter": "0.3.0-dev.45", "@prisma-next/utils": "0.3.0-dev.45", "arktype": "^2.0.0", "c12": "^3.3.2", "colorette": "^2.0.20", "commander": "^12.0.0", "esbuild": "^0.19.0", "ora": "^8.1.1", "pathe": "^2.0.3", "string-width": "^7.2.0", "strip-ansi": "^7.1.2", "wrap-ansi": "^9.0.2" }, "bin": { "prisma-next": "dist/cli.js" } }, "sha512-zmGo6AFniOFV9ltzUS1UE2BierNrE4NKqFnh7vztL2mlJZ9yS5LsdFkdOzBS1iQ40t+5w660Z2YEbXgla9lDdA=="],
+    "@prisma-next/cli": ["@prisma-next/cli@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/core-control-plane": "0.3.0-dev.53", "@prisma-next/emitter": "0.3.0-dev.53", "@prisma-next/utils": "0.3.0-dev.53", "arktype": "^2.0.0", "c12": "^3.3.2", "colorette": "^2.0.20", "commander": "^12.0.0", "esbuild": "^0.19.0", "ora": "^8.1.1", "pathe": "^2.0.3", "string-width": "^7.2.0", "strip-ansi": "^7.1.2", "wrap-ansi": "^9.0.2" }, "bin": { "prisma-next": "dist/cli.js" } }, "sha512-INxN8qGJxSMk2ONXMbcJ9w9iQbJi5bIt6VssgJmeFxJMHe+Upd7oYPqUvfffbqNGZQVxkJGZlh1f3S5Qp461ZA=="],
 
     "@prisma-next/contract": ["@prisma-next/contract@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/operations": "0.3.0-dev.45" } }, "sha512-wKWwc1FItco+H2C5X46EskKT4JV2xSPb/eze6R2koFk4/domZtLzV4byi1W/MtKG1rhHyj35OW8CYQOpDSE4ug=="],
 
-    "@prisma-next/contract-authoring": ["@prisma-next/contract-authoring@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.45", "@prisma-next/utils": "0.3.0-dev.45", "ts-toolbelt": "^9.6.0" } }, "sha512-BL8+1FLYm/bB8GLyt2A04fRPGLXZi7Fnxa1vegb7kPS1s77e+gFwNeAXr61Aisza0M3hfnG1tdTBid9jT8X03w=="],
+    "@prisma-next/contract-authoring": ["@prisma-next/contract-authoring@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/utils": "0.3.0-dev.53", "ts-toolbelt": "^9.6.0" } }, "sha512-qRumyj3LAQsCSnKaT5e6Zr7TL5jOR7flxiWzEtjq6SSfCULYp0m879flMi2Z0he0/AOIaD6n3TQTmmjK5nffTg=="],
 
-    "@prisma-next/core-control-plane": ["@prisma-next/core-control-plane@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.45", "@prisma-next/operations": "0.3.0-dev.45", "@prisma-next/utils": "0.3.0-dev.45", "arktype": "^2.1.26", "prettier": "^3.3.3" } }, "sha512-zLF9aF9NCUHhx35PU/CYKxuPNy4fzKuTbJFkdLIj3HcdiiAnIOaorhsJL+YogT0Q5LAZfaLihjMZiRb7dstMNw=="],
+    "@prisma-next/core-control-plane": ["@prisma-next/core-control-plane@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/operations": "0.3.0-dev.53", "@prisma-next/utils": "0.3.0-dev.53", "arktype": "^2.1.26", "prettier": "^3.3.3" } }, "sha512-tLrvSeNnZfyqSxgw9BcNW0Jy/HaW8smdnljZkHWyo6/W8sl/95JW83fSNVyvj5E7f31JRQNILoPTV/+kLWPwvg=="],
 
-    "@prisma-next/core-execution-plane": ["@prisma-next/core-execution-plane@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.45", "@prisma-next/core-control-plane": "0.3.0-dev.45" } }, "sha512-sufY1fNrx3ugLAoc07qPyhQGnv+RbtWePMcg0zpcxZTVTEs9hscTljrGNPQfN9X7INstgSMNLnOVUVVK9qbhnA=="],
+    "@prisma-next/core-execution-plane": ["@prisma-next/core-execution-plane@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/core-control-plane": "0.3.0-dev.53" } }, "sha512-ijlOhtX1D9wpFxU2U7gnNfmo9t3nVXRC7bZ2IUBcz9IiNCWrsT24m062ZagV3NtsDnvg7M4wtyd3CSiUm3sv3w=="],
 
-    "@prisma-next/driver-postgres": ["@prisma-next/driver-postgres@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.45", "@prisma-next/core-control-plane": "0.3.0-dev.45", "@prisma-next/core-execution-plane": "0.3.0-dev.45", "@prisma-next/sql-contract": "0.3.0-dev.45", "@prisma-next/sql-errors": "0.3.0-dev.45", "@prisma-next/sql-operations": "0.3.0-dev.45", "@prisma-next/sql-relational-core": "0.3.0-dev.45", "@prisma-next/utils": "0.3.0-dev.45", "arktype": "^2.0.0", "pg": "8.16.3", "pg-cursor": "^2.10.5" } }, "sha512-W9MoZcc92VO3wAE0PL7a0TZtYKwYAuNcUwJ602QgnR1tmoAh3Rex19criqKZiX+i/LzoGNeUbGL+j8A/ZQjJDg=="],
+    "@prisma-next/driver-postgres": ["@prisma-next/driver-postgres@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/core-control-plane": "0.3.0-dev.53", "@prisma-next/core-execution-plane": "0.3.0-dev.53", "@prisma-next/sql-contract": "0.3.0-dev.53", "@prisma-next/sql-errors": "0.3.0-dev.53", "@prisma-next/sql-operations": "0.3.0-dev.53", "@prisma-next/sql-relational-core": "0.3.0-dev.53", "@prisma-next/utils": "0.3.0-dev.53", "arktype": "^2.0.0", "pg": "8.16.3", "pg-cursor": "^2.10.5" } }, "sha512-vflRNld/ZQRKVtK/Bo2lAJBcPkPSGFiA9fn6MKxM011sATlySMzgeGZ2NTENqy4zeV9nFJjA4JILhe66C8wIUQ=="],
 
-    "@prisma-next/emitter": ["@prisma-next/emitter@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.45", "@prisma-next/core-control-plane": "0.3.0-dev.45", "arktype": "^2.0.0" } }, "sha512-TWbW2REi5Lo29h6vUQoVy1dh5PE0L6cCWUQ2/M5gH9T3ylFYkDvCllK9vR7CeS0cayqAQBPMaI0PQx/1IoqVcg=="],
+    "@prisma-next/emitter": ["@prisma-next/emitter@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/core-control-plane": "0.3.0-dev.53", "arktype": "^2.0.0" } }, "sha512-coYijk7toeJmPTWUJI09cpfPPbtdxtOYdLIY6JbcCCpuZWwDp2C0AczlY+oHuQfQwJHXQdaEof0vNioyAC7VAQ=="],
 
-    "@prisma-next/family-sql": ["@prisma-next/family-sql@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/cli": "0.3.0-dev.45", "@prisma-next/contract": "0.3.0-dev.45", "@prisma-next/core-control-plane": "0.3.0-dev.45", "@prisma-next/core-execution-plane": "0.3.0-dev.45", "@prisma-next/operations": "0.3.0-dev.45", "@prisma-next/runtime-executor": "0.3.0-dev.45", "@prisma-next/sql-contract": "0.3.0-dev.45", "@prisma-next/sql-contract-emitter": "0.3.0-dev.45", "@prisma-next/sql-contract-ts": "0.3.0-dev.45", "@prisma-next/sql-operations": "0.3.0-dev.45", "@prisma-next/sql-relational-core": "0.3.0-dev.45", "@prisma-next/sql-runtime": "0.3.0-dev.45", "@prisma-next/sql-schema-ir": "0.3.0-dev.45", "@prisma-next/utils": "0.3.0-dev.45", "arktype": "^2.0.0" } }, "sha512-l2yuIZm5YjmWwNt+2NfuzVvVwbsDNOa2v9EaA3lCxlQzHuXf3JfKLQSe/aViEv8g3sRnhjLBxXs6HzNvuWCtqQ=="],
+    "@prisma-next/family-sql": ["@prisma-next/family-sql@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/cli": "0.3.0-dev.53", "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/core-control-plane": "0.3.0-dev.53", "@prisma-next/core-execution-plane": "0.3.0-dev.53", "@prisma-next/operations": "0.3.0-dev.53", "@prisma-next/runtime-executor": "0.3.0-dev.53", "@prisma-next/sql-contract": "0.3.0-dev.53", "@prisma-next/sql-contract-emitter": "0.3.0-dev.53", "@prisma-next/sql-contract-ts": "0.3.0-dev.53", "@prisma-next/sql-operations": "0.3.0-dev.53", "@prisma-next/sql-relational-core": "0.3.0-dev.53", "@prisma-next/sql-runtime": "0.3.0-dev.53", "@prisma-next/sql-schema-ir": "0.3.0-dev.53", "@prisma-next/utils": "0.3.0-dev.53", "arktype": "^2.0.0" } }, "sha512-ezUZokjLRs5h4vn+JQxsBz6Chd7Z23sEFwaI+CDxr5vKcru1bamAROU/kHQ+h7108zIUOcWC6tk9Kj2cksszvQ=="],
 
-    "@prisma-next/ids": ["@prisma-next/ids@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.45", "@prisma-next/contract-authoring": "0.3.0-dev.45", "@prisma-next/utils": "0.3.0-dev.45", "uniku": "^0.0.12" } }, "sha512-EVGdQLbNLO3NnprQzS9WEtLoo5wzmX8I99qD2Fp7wjYcLR2UdMKa/XOho84Dg8JuDEGte3tNgvL/LYF70o2fpw=="],
+    "@prisma-next/ids": ["@prisma-next/ids@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/contract-authoring": "0.3.0-dev.53", "@prisma-next/utils": "0.3.0-dev.53", "uniku": "^0.0.12" } }, "sha512-mu9gJvACs8nEMDmR2pEluzK34mxnF0Fil8ezQwaTPqcGjMZxKM++ClKz3HFXy3kY0XScwlWnpLhwym1yDa3gzg=="],
 
     "@prisma-next/integration-kysely": ["@prisma-next/integration-kysely@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/utils": "0.3.0-dev.45" }, "peerDependencies": { "kysely": "^0.28.10" } }, "sha512-rZOW46wq1a82VT/qE1swOv3K1yWltjmHF2k3G1BWsXdJpyzctsfF8NMi39wtDSHZOPZbu7lTY1g916gI5kMNdQ=="],
 
-    "@prisma-next/operations": ["@prisma-next/operations@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/plan": "0.3.0-dev.45" } }, "sha512-7oH2gAf1dMHcfQcQIbiLOfmK3JGwb7stF+fGzITs040Q2+3Eo5u6XDhEnRYHH8kfWOE4o5Q/k6gDrBfkrjs9ig=="],
+    "@prisma-next/operations": ["@prisma-next/operations@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/plan": "0.3.0-dev.53" } }, "sha512-Lx1NuRBEAtIP10LHKTgh0ywwiUzaLt7MCCsSwnUzr9xuDhUHs1H2XWUF1yBgK31D9PcbnVGpY3dgEbu+ZN/m+A=="],
 
     "@prisma-next/plan": ["@prisma-next/plan@0.3.0-dev.45", "", {}, "sha512-hLqF+2pIPjjlDb+KrGFMp/JKOZl5B3udc/fzv/HzFMgvtdSbUmou5dejT2aRyPMYr1tibiCSX1L3DwMmlb/Y8g=="],
 
-    "@prisma-next/postgres": ["@prisma-next/postgres@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/adapter-postgres": "0.3.0-dev.45", "@prisma-next/core-execution-plane": "0.3.0-dev.45", "@prisma-next/driver-postgres": "0.3.0-dev.45", "@prisma-next/integration-kysely": "0.3.0-dev.45", "@prisma-next/sql-contract": "0.3.0-dev.45", "@prisma-next/sql-lane": "0.3.0-dev.45", "@prisma-next/sql-orm-client": "0.3.0-dev.45", "@prisma-next/sql-relational-core": "0.3.0-dev.45", "@prisma-next/sql-runtime": "0.3.0-dev.45", "@prisma-next/target-postgres": "0.3.0-dev.45", "kysely": "0.28.10", "pg": "8.16.3" } }, "sha512-gtq7NtxOJW63nUn2gFk5nDS6y+5dwiA54SMfxhX0vN4+gmXCSwBqJmjnaGA5zDEWk4JO4oftFUaH6saAOXGndg=="],
+    "@prisma-next/postgres": ["@prisma-next/postgres@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/adapter-postgres": "0.3.0-dev.53", "@prisma-next/core-execution-plane": "0.3.0-dev.53", "@prisma-next/driver-postgres": "0.3.0-dev.53", "@prisma-next/sql-contract": "0.3.0-dev.53", "@prisma-next/sql-kysely-lane": "0.3.0-dev.53", "@prisma-next/sql-lane": "0.3.0-dev.53", "@prisma-next/sql-orm-client": "0.3.0-dev.53", "@prisma-next/sql-relational-core": "0.3.0-dev.53", "@prisma-next/sql-runtime": "0.3.0-dev.53", "@prisma-next/target-postgres": "0.3.0-dev.53", "pg": "8.16.3" } }, "sha512-2QmkWFtHp+A2Ziy1yAGsKV0ZFLYAQBq/Xqhs7OXPtFLWy9Q55Eqx4HlMIO+Pk/5204XUu6CXuOvD2OKr/23D4A=="],
+
+    "@prisma-next/psl-parser": ["@prisma-next/psl-parser@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/utils": "0.3.0-dev.53" } }, "sha512-aaSPhBM5YAZ5vykn7d3d0F7GmzBGCnlpAlv4EiLk+ZMsXZbYXMNFT8bfmQ989406B0cVhAElFg5WDc7gYJzkEg=="],
 
     "@prisma-next/runtime-executor": ["@prisma-next/runtime-executor@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.45", "@prisma-next/operations": "0.3.0-dev.45", "arktype": "^2.1.25" } }, "sha512-l+/At5ieEgb2xo82Pcu+nnr6xN5tzkxNlXdhZ1AcLNqoIl3t+B3h9tJq4PypBDoIBuIUZaOBuJCAPKbdvgk3WA=="],
 
-    "@prisma-next/sql-contract": ["@prisma-next/sql-contract@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.45", "arktype": "^2.1.25" } }, "sha512-869HJrG8uIYFJkZU+gE4+n2v590L9nkzjpwHf55h44lWRftEdpO8d7dlgbtPSc+mT19mew5dNKNOdK1dOeckKA=="],
+    "@prisma-next/sql-contract": ["@prisma-next/sql-contract@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "arktype": "^2.1.25" } }, "sha512-UHG7CiY6aTWi6kvJR9diDG3L/oD0Y2sMd6NDOsKtVJ09U7kNNAF94CDm/fyjrA6PHLFBUeYhDcIjMCtuAnLd3w=="],
 
-    "@prisma-next/sql-contract-emitter": ["@prisma-next/sql-contract-emitter@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.45", "@prisma-next/emitter": "0.3.0-dev.45", "@prisma-next/sql-contract": "0.3.0-dev.45", "@prisma-next/utils": "0.3.0-dev.45" } }, "sha512-9CP31A7XCFEvZ2DXf9o8T89Fh9c6hvwmuYqCZIJ3GV+Mr+YJ1ZVUlNi9BWGkNTE9T6yfImOK/43bvPSNEuavcg=="],
+    "@prisma-next/sql-contract-emitter": ["@prisma-next/sql-contract-emitter@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/emitter": "0.3.0-dev.53", "@prisma-next/sql-contract": "0.3.0-dev.53", "@prisma-next/utils": "0.3.0-dev.53" } }, "sha512-psu/32VbcUV1UgMDINsfJXDm2isVJQ6meIlAHuA7z0Ww9oW8TL6ARfnl4ZPPWJdGb5S6g/b6IvXvczkSxN9uuw=="],
 
-    "@prisma-next/sql-contract-ts": ["@prisma-next/sql-contract-ts@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.45", "@prisma-next/contract-authoring": "0.3.0-dev.45", "@prisma-next/sql-contract": "0.3.0-dev.45", "@prisma-next/utils": "0.3.0-dev.45", "arktype": "^2.1.25", "ts-toolbelt": "^9.6.0" } }, "sha512-9sZ9izJC7oBaM2tnq6q0sYrscMQWTDK+e5RckyfIqZla+O85cEQTO26uSNpUEnq1lwxY762v8siC1gyRu74LKg=="],
+    "@prisma-next/sql-contract-psl": ["@prisma-next/sql-contract-psl@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/core-control-plane": "0.3.0-dev.53", "@prisma-next/psl-parser": "0.3.0-dev.53", "@prisma-next/sql-contract-ts": "0.3.0-dev.53", "@prisma-next/utils": "0.3.0-dev.53", "pathe": "^2.0.3" } }, "sha512-XsODKPpony+JVolcQvcyHRoNe6A7Ja0B2jEd3mNmA8aSggGnmRyKLAt+ikOrtYUl1edsuQ+kdNSoHmHUi4io1A=="],
 
-    "@prisma-next/sql-errors": ["@prisma-next/sql-errors@0.3.0-dev.45", "", {}, "sha512-p3yWxavIq6OxEOg1zVSyUrkzbW65AjgTb3ifE23MFLVzdqPSWWP74XU6MPpKnrvbr7ZtNiGuDsKAKX/GYL+A0w=="],
+    "@prisma-next/sql-contract-ts": ["@prisma-next/sql-contract-ts@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/contract-authoring": "0.3.0-dev.53", "@prisma-next/core-control-plane": "0.3.0-dev.53", "@prisma-next/sql-contract": "0.3.0-dev.53", "@prisma-next/utils": "0.3.0-dev.53", "arktype": "^2.1.25", "ts-toolbelt": "^9.6.0" } }, "sha512-VQB0IQRcLt27njzSJaYLftRRyyD/udtWiboqQ8mGmMt8/2+wUwXfQBpdu9vCZag3ETNYhZAgPgmHob1NK6wV1g=="],
 
-    "@prisma-next/sql-lane": ["@prisma-next/sql-lane@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.45", "@prisma-next/plan": "0.3.0-dev.45", "@prisma-next/sql-contract": "0.3.0-dev.45", "@prisma-next/sql-relational-core": "0.3.0-dev.45" } }, "sha512-Z2EuNESVaw2j7AIK+VrhKvO77iKs4k2HwYVK8Hb4myGgWcgAp4Ph20jUNT9RoB7LhuDAIHlUeyo4AG0Mqm1iQA=="],
+    "@prisma-next/sql-errors": ["@prisma-next/sql-errors@0.3.0-dev.53", "", {}, "sha512-eHWU83wnamcYvLJm+6At6XkzvkoGMOQ5c1fqn+yK6RNP1AzmYGm/GX23BjuAuJkbd82jDHk9bXUUseeQKaJpUQ=="],
 
-    "@prisma-next/sql-operations": ["@prisma-next/sql-operations@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/operations": "0.3.0-dev.45", "arktype": "^2.1.26" } }, "sha512-0Z32dVuIHm/tuAyG+GVL+IJF/gGTZ8XNRVW28mNJVg5Z9WqZP58QFz6pE7WWJciQtbGTAxmgPuxo1O6jhnYjAw=="],
+    "@prisma-next/sql-kysely-lane": ["@prisma-next/sql-kysely-lane@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/sql-contract": "0.3.0-dev.53", "@prisma-next/sql-relational-core": "0.3.0-dev.53", "@prisma-next/utils": "0.3.0-dev.53", "kysely": "0.28.10" } }, "sha512-YxZ7fmltcoRbgwTeG9Rc53Q6Rf77numGhBF9+XQvoN+DhsPNY6Ba2fap0z8gKMLu9Zw1r+RCQtBOt5G0dOMrNA=="],
+
+    "@prisma-next/sql-lane": ["@prisma-next/sql-lane@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/plan": "0.3.0-dev.53", "@prisma-next/sql-contract": "0.3.0-dev.53", "@prisma-next/sql-relational-core": "0.3.0-dev.53" } }, "sha512-GtH7Z4O7LMatFPbP30Q16ADYcs6kSK3eU9MpCi1zWQ2qo0h0+Wq49lm3CobBZW9M0n96lSJG1gMXqkU6EcSzjQ=="],
+
+    "@prisma-next/sql-operations": ["@prisma-next/sql-operations@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/operations": "0.3.0-dev.53", "arktype": "^2.1.26" } }, "sha512-YeZxqYe3F7VPGH6gHbvYwbmREll0Z4pnBjQbhJJA0Nt6zwcCzjfLiHp2nk7kx0S46pkS0q2BDoLKhgYMceH7Gw=="],
 
     "@prisma-next/sql-orm-client": ["@prisma-next/sql-orm-client@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.45", "@prisma-next/integration-kysely": "0.3.0-dev.45", "@prisma-next/runtime-executor": "0.3.0-dev.45", "@prisma-next/sql-contract": "0.3.0-dev.45", "@prisma-next/sql-relational-core": "0.3.0-dev.45", "@prisma-next/sql-runtime": "0.3.0-dev.45", "kysely": "0.28.10" } }, "sha512-VObna9Ak/0vmRpg9ssdT8Ufm8CDFdUAO4qXEV39yofdBs7IqxmPKjWPzhxpQLerjFKb3lBPJNdwhUOUdY1Ut7g=="],
 
     "@prisma-next/sql-relational-core": ["@prisma-next/sql-relational-core@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.45", "@prisma-next/operations": "0.3.0-dev.45", "@prisma-next/plan": "0.3.0-dev.45", "@prisma-next/sql-contract": "0.3.0-dev.45", "@prisma-next/sql-operations": "0.3.0-dev.45", "@prisma-next/utils": "0.3.0-dev.45", "arktype": "^2.1.29", "ts-toolbelt": "^9.6.0" } }, "sha512-JHYGjgm/9bYSZXnS8MS13BkpOdxFCqdTbYEpBTzg4+4CzaiAn1hC3j0z25T75HJrazZ9uv2/C6s4prxMWgm/qg=="],
 
-    "@prisma-next/sql-runtime": ["@prisma-next/sql-runtime@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.45", "@prisma-next/core-execution-plane": "0.3.0-dev.45", "@prisma-next/ids": "0.3.0-dev.45", "@prisma-next/operations": "0.3.0-dev.45", "@prisma-next/runtime-executor": "0.3.0-dev.45", "@prisma-next/sql-contract": "0.3.0-dev.45", "@prisma-next/sql-operations": "0.3.0-dev.45", "@prisma-next/sql-relational-core": "0.3.0-dev.45", "@prisma-next/utils": "0.3.0-dev.45", "arktype": "^2.1.26" } }, "sha512-uQcDsknEh69UTjf0O1S848Aewo9mstOS46lx/spOTpM+6qWxWVCLrx41MAGhaKJVdtPXTHVpjBP5GGbN0I0R0w=="],
+    "@prisma-next/sql-runtime": ["@prisma-next/sql-runtime@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/core-execution-plane": "0.3.0-dev.53", "@prisma-next/ids": "0.3.0-dev.53", "@prisma-next/operations": "0.3.0-dev.53", "@prisma-next/runtime-executor": "0.3.0-dev.53", "@prisma-next/sql-contract": "0.3.0-dev.53", "@prisma-next/sql-operations": "0.3.0-dev.53", "@prisma-next/sql-relational-core": "0.3.0-dev.53", "@prisma-next/utils": "0.3.0-dev.53", "arktype": "^2.1.26" } }, "sha512-/Ht/TG5gewZ2mMIdlrTLZKApD8q1IC32owmsOuchOVqWHmdXQEP3lEGNK1bIh8P4kl6eIkhkNtISnTmu5FbN9w=="],
 
-    "@prisma-next/sql-schema-ir": ["@prisma-next/sql-schema-ir@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.45" } }, "sha512-WijcIHHtgO9a6F/iCZZzLm+c2F/ZZ4KPHiehZ9pqkRdzS2lChJOyxGIi+K5y5V+A6iLLrL7mHZRmUIJ82IAFYw=="],
+    "@prisma-next/sql-schema-ir": ["@prisma-next/sql-schema-ir@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53" } }, "sha512-5ccJsROhWSxBlJ3CTW6PmYx3KkbVkQYyL40VdEfeqfxNr8s6VK7u/nMjorsqdovw7GL7eaNdGV+6uL4m82/Zqg=="],
 
-    "@prisma-next/target-postgres": ["@prisma-next/target-postgres@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/cli": "0.3.0-dev.45", "@prisma-next/contract": "0.3.0-dev.45", "@prisma-next/core-control-plane": "0.3.0-dev.45", "@prisma-next/core-execution-plane": "0.3.0-dev.45", "@prisma-next/family-sql": "0.3.0-dev.45", "@prisma-next/sql-contract": "0.3.0-dev.45", "@prisma-next/sql-errors": "0.3.0-dev.45", "@prisma-next/sql-relational-core": "0.3.0-dev.45", "@prisma-next/sql-runtime": "0.3.0-dev.45", "@prisma-next/sql-schema-ir": "0.3.0-dev.45", "@prisma-next/utils": "0.3.0-dev.45", "arktype": "^2.0.0" } }, "sha512-OY+VWcRiOyyh3hgU5+6S/Mg8lMhTGXLMFPeNSj1974dL0lz1ULyV/pYgnUvO9nBK586USSIjJDObIjcEV8FfOA=="],
+    "@prisma-next/target-postgres": ["@prisma-next/target-postgres@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/cli": "0.3.0-dev.53", "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/core-control-plane": "0.3.0-dev.53", "@prisma-next/core-execution-plane": "0.3.0-dev.53", "@prisma-next/family-sql": "0.3.0-dev.53", "@prisma-next/sql-contract": "0.3.0-dev.53", "@prisma-next/sql-errors": "0.3.0-dev.53", "@prisma-next/sql-relational-core": "0.3.0-dev.53", "@prisma-next/sql-runtime": "0.3.0-dev.53", "@prisma-next/sql-schema-ir": "0.3.0-dev.53", "@prisma-next/utils": "0.3.0-dev.53", "arktype": "^2.0.0" } }, "sha512-KeOAcRhUVYXzUBaApsn2wkHfk8oG/pzbb1Pckg1swtprUdAg+1a14hgFgUhn5rPWOy8bn1CIkrdS2CVWmiszYw=="],
 
-    "@prisma-next/utils": ["@prisma-next/utils@0.3.0-dev.45", "", {}, "sha512-E6Gt4diw+SoJiiHBPW0ahK6iXbV8edGPHqNjflEyt6pbAwHzmi7PrytPRhNXprE/uWbhll+qAZdREYxF7SoMKA=="],
+    "@prisma-next/utils": ["@prisma-next/utils@0.3.0-dev.53", "", {}, "sha512-Z5Swd+RPw6QGTbU2aRIa8LRzPfvfpTcs/21jBhwPBJ853mZUaNSykrC8QOi96e2RuuK8nmnEyzkILkllV1UgBg=="],
 
     "@quansync/fs": ["@quansync/fs@1.0.0", "", { "dependencies": { "quansync": "^1.0.0" } }, "sha512-4TJ3DFtlf1L5LDMaM6CanJ/0lckGNtJcMjQ1NAV6zDmA0tEHKZtxNKin8EgPaVX1YzljbxckyT2tJrpQKAtngQ=="],
 
@@ -1340,6 +1346,88 @@
 
     "@noble/curves/@noble/hashes": ["@noble/hashes@1.8.0", "", {}, "sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A=="],
 
+    "@pokedex/db/@prisma-next/sql-orm-client": ["@prisma-next/sql-orm-client@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/runtime-executor": "0.3.0-dev.53", "@prisma-next/sql-contract": "0.3.0-dev.53", "@prisma-next/sql-relational-core": "0.3.0-dev.53", "@prisma-next/sql-runtime": "0.3.0-dev.53", "@prisma-next/utils": "0.3.0-dev.53", "kysely": "0.28.10" } }, "sha512-GdQVgiPcQtGHbyCm5Ahs7yeBD3j5aDIDkMIPXgQ+meKVIhJHUtHd7AS1ptrjQXpaHObT1+nDyhdKBQotvsQq/g=="],
+
+    "@prisma-next/adapter-postgres/@prisma-next/contract": ["@prisma-next/contract@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/operations": "0.3.0-dev.53" } }, "sha512-sL/yIe6g1F1Onb4qY6Y0V4qcTBfDnzpGMZQm59/DSv+nVMnfaNu0MW8Ze+CLn4ia1u/kOqiznoVeEdgdv2jRnw=="],
+
+    "@prisma-next/adapter-postgres/@prisma-next/sql-relational-core": ["@prisma-next/sql-relational-core@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/operations": "0.3.0-dev.53", "@prisma-next/plan": "0.3.0-dev.53", "@prisma-next/sql-contract": "0.3.0-dev.53", "@prisma-next/sql-operations": "0.3.0-dev.53", "@prisma-next/utils": "0.3.0-dev.53", "arktype": "^2.1.29", "ts-toolbelt": "^9.6.0" } }, "sha512-TBXce7DMjNfau5dmd3RBTcNbm3/VovpdC7zRCSy3hkZJCBJYer+pb9Pus1CvpIeX/3kx1fxaZ2XD/oVniFrgxg=="],
+
+    "@prisma-next/cli/@prisma-next/contract": ["@prisma-next/contract@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/operations": "0.3.0-dev.53" } }, "sha512-sL/yIe6g1F1Onb4qY6Y0V4qcTBfDnzpGMZQm59/DSv+nVMnfaNu0MW8Ze+CLn4ia1u/kOqiznoVeEdgdv2jRnw=="],
+
+    "@prisma-next/contract/@prisma-next/operations": ["@prisma-next/operations@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/plan": "0.3.0-dev.45" } }, "sha512-7oH2gAf1dMHcfQcQIbiLOfmK3JGwb7stF+fGzITs040Q2+3Eo5u6XDhEnRYHH8kfWOE4o5Q/k6gDrBfkrjs9ig=="],
+
+    "@prisma-next/contract-authoring/@prisma-next/contract": ["@prisma-next/contract@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/operations": "0.3.0-dev.53" } }, "sha512-sL/yIe6g1F1Onb4qY6Y0V4qcTBfDnzpGMZQm59/DSv+nVMnfaNu0MW8Ze+CLn4ia1u/kOqiznoVeEdgdv2jRnw=="],
+
+    "@prisma-next/core-control-plane/@prisma-next/contract": ["@prisma-next/contract@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/operations": "0.3.0-dev.53" } }, "sha512-sL/yIe6g1F1Onb4qY6Y0V4qcTBfDnzpGMZQm59/DSv+nVMnfaNu0MW8Ze+CLn4ia1u/kOqiznoVeEdgdv2jRnw=="],
+
+    "@prisma-next/core-execution-plane/@prisma-next/contract": ["@prisma-next/contract@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/operations": "0.3.0-dev.53" } }, "sha512-sL/yIe6g1F1Onb4qY6Y0V4qcTBfDnzpGMZQm59/DSv+nVMnfaNu0MW8Ze+CLn4ia1u/kOqiznoVeEdgdv2jRnw=="],
+
+    "@prisma-next/driver-postgres/@prisma-next/contract": ["@prisma-next/contract@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/operations": "0.3.0-dev.53" } }, "sha512-sL/yIe6g1F1Onb4qY6Y0V4qcTBfDnzpGMZQm59/DSv+nVMnfaNu0MW8Ze+CLn4ia1u/kOqiznoVeEdgdv2jRnw=="],
+
+    "@prisma-next/driver-postgres/@prisma-next/sql-relational-core": ["@prisma-next/sql-relational-core@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/operations": "0.3.0-dev.53", "@prisma-next/plan": "0.3.0-dev.53", "@prisma-next/sql-contract": "0.3.0-dev.53", "@prisma-next/sql-operations": "0.3.0-dev.53", "@prisma-next/utils": "0.3.0-dev.53", "arktype": "^2.1.29", "ts-toolbelt": "^9.6.0" } }, "sha512-TBXce7DMjNfau5dmd3RBTcNbm3/VovpdC7zRCSy3hkZJCBJYer+pb9Pus1CvpIeX/3kx1fxaZ2XD/oVniFrgxg=="],
+
+    "@prisma-next/emitter/@prisma-next/contract": ["@prisma-next/contract@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/operations": "0.3.0-dev.53" } }, "sha512-sL/yIe6g1F1Onb4qY6Y0V4qcTBfDnzpGMZQm59/DSv+nVMnfaNu0MW8Ze+CLn4ia1u/kOqiznoVeEdgdv2jRnw=="],
+
+    "@prisma-next/family-sql/@prisma-next/contract": ["@prisma-next/contract@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/operations": "0.3.0-dev.53" } }, "sha512-sL/yIe6g1F1Onb4qY6Y0V4qcTBfDnzpGMZQm59/DSv+nVMnfaNu0MW8Ze+CLn4ia1u/kOqiznoVeEdgdv2jRnw=="],
+
+    "@prisma-next/family-sql/@prisma-next/runtime-executor": ["@prisma-next/runtime-executor@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/operations": "0.3.0-dev.53", "arktype": "^2.1.25" } }, "sha512-jrkQjEfgXfwlxoxjN5qP3Y6xMy1TflGatx2vpjrIrOzWTwE4Nd5kR6cwSsY9Fsoa00wQhKuICfWYkGU4NpKyNw=="],
+
+    "@prisma-next/family-sql/@prisma-next/sql-relational-core": ["@prisma-next/sql-relational-core@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/operations": "0.3.0-dev.53", "@prisma-next/plan": "0.3.0-dev.53", "@prisma-next/sql-contract": "0.3.0-dev.53", "@prisma-next/sql-operations": "0.3.0-dev.53", "@prisma-next/utils": "0.3.0-dev.53", "arktype": "^2.1.29", "ts-toolbelt": "^9.6.0" } }, "sha512-TBXce7DMjNfau5dmd3RBTcNbm3/VovpdC7zRCSy3hkZJCBJYer+pb9Pus1CvpIeX/3kx1fxaZ2XD/oVniFrgxg=="],
+
+    "@prisma-next/ids/@prisma-next/contract": ["@prisma-next/contract@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/operations": "0.3.0-dev.53" } }, "sha512-sL/yIe6g1F1Onb4qY6Y0V4qcTBfDnzpGMZQm59/DSv+nVMnfaNu0MW8Ze+CLn4ia1u/kOqiznoVeEdgdv2jRnw=="],
+
+    "@prisma-next/integration-kysely/@prisma-next/utils": ["@prisma-next/utils@0.3.0-dev.45", "", {}, "sha512-E6Gt4diw+SoJiiHBPW0ahK6iXbV8edGPHqNjflEyt6pbAwHzmi7PrytPRhNXprE/uWbhll+qAZdREYxF7SoMKA=="],
+
+    "@prisma-next/operations/@prisma-next/plan": ["@prisma-next/plan@0.3.0-dev.53", "", {}, "sha512-2GKIbfRno9XJqzG+XcSBTRmGJymcyGczfGQdQ5TEndXK3GawfSaDiTkUKgy0kqeiM+fRsn5taUTvJNYgZDzs5w=="],
+
+    "@prisma-next/postgres/@prisma-next/sql-orm-client": ["@prisma-next/sql-orm-client@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/runtime-executor": "0.3.0-dev.53", "@prisma-next/sql-contract": "0.3.0-dev.53", "@prisma-next/sql-relational-core": "0.3.0-dev.53", "@prisma-next/sql-runtime": "0.3.0-dev.53", "@prisma-next/utils": "0.3.0-dev.53", "kysely": "0.28.10" } }, "sha512-GdQVgiPcQtGHbyCm5Ahs7yeBD3j5aDIDkMIPXgQ+meKVIhJHUtHd7AS1ptrjQXpaHObT1+nDyhdKBQotvsQq/g=="],
+
+    "@prisma-next/postgres/@prisma-next/sql-relational-core": ["@prisma-next/sql-relational-core@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/operations": "0.3.0-dev.53", "@prisma-next/plan": "0.3.0-dev.53", "@prisma-next/sql-contract": "0.3.0-dev.53", "@prisma-next/sql-operations": "0.3.0-dev.53", "@prisma-next/utils": "0.3.0-dev.53", "arktype": "^2.1.29", "ts-toolbelt": "^9.6.0" } }, "sha512-TBXce7DMjNfau5dmd3RBTcNbm3/VovpdC7zRCSy3hkZJCBJYer+pb9Pus1CvpIeX/3kx1fxaZ2XD/oVniFrgxg=="],
+
+    "@prisma-next/runtime-executor/@prisma-next/operations": ["@prisma-next/operations@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/plan": "0.3.0-dev.45" } }, "sha512-7oH2gAf1dMHcfQcQIbiLOfmK3JGwb7stF+fGzITs040Q2+3Eo5u6XDhEnRYHH8kfWOE4o5Q/k6gDrBfkrjs9ig=="],
+
+    "@prisma-next/sql-contract/@prisma-next/contract": ["@prisma-next/contract@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/operations": "0.3.0-dev.53" } }, "sha512-sL/yIe6g1F1Onb4qY6Y0V4qcTBfDnzpGMZQm59/DSv+nVMnfaNu0MW8Ze+CLn4ia1u/kOqiznoVeEdgdv2jRnw=="],
+
+    "@prisma-next/sql-contract-emitter/@prisma-next/contract": ["@prisma-next/contract@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/operations": "0.3.0-dev.53" } }, "sha512-sL/yIe6g1F1Onb4qY6Y0V4qcTBfDnzpGMZQm59/DSv+nVMnfaNu0MW8Ze+CLn4ia1u/kOqiznoVeEdgdv2jRnw=="],
+
+    "@prisma-next/sql-contract-psl/@prisma-next/contract": ["@prisma-next/contract@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/operations": "0.3.0-dev.53" } }, "sha512-sL/yIe6g1F1Onb4qY6Y0V4qcTBfDnzpGMZQm59/DSv+nVMnfaNu0MW8Ze+CLn4ia1u/kOqiznoVeEdgdv2jRnw=="],
+
+    "@prisma-next/sql-contract-ts/@prisma-next/contract": ["@prisma-next/contract@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/operations": "0.3.0-dev.53" } }, "sha512-sL/yIe6g1F1Onb4qY6Y0V4qcTBfDnzpGMZQm59/DSv+nVMnfaNu0MW8Ze+CLn4ia1u/kOqiznoVeEdgdv2jRnw=="],
+
+    "@prisma-next/sql-kysely-lane/@prisma-next/contract": ["@prisma-next/contract@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/operations": "0.3.0-dev.53" } }, "sha512-sL/yIe6g1F1Onb4qY6Y0V4qcTBfDnzpGMZQm59/DSv+nVMnfaNu0MW8Ze+CLn4ia1u/kOqiznoVeEdgdv2jRnw=="],
+
+    "@prisma-next/sql-kysely-lane/@prisma-next/sql-relational-core": ["@prisma-next/sql-relational-core@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/operations": "0.3.0-dev.53", "@prisma-next/plan": "0.3.0-dev.53", "@prisma-next/sql-contract": "0.3.0-dev.53", "@prisma-next/sql-operations": "0.3.0-dev.53", "@prisma-next/utils": "0.3.0-dev.53", "arktype": "^2.1.29", "ts-toolbelt": "^9.6.0" } }, "sha512-TBXce7DMjNfau5dmd3RBTcNbm3/VovpdC7zRCSy3hkZJCBJYer+pb9Pus1CvpIeX/3kx1fxaZ2XD/oVniFrgxg=="],
+
+    "@prisma-next/sql-lane/@prisma-next/contract": ["@prisma-next/contract@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/operations": "0.3.0-dev.53" } }, "sha512-sL/yIe6g1F1Onb4qY6Y0V4qcTBfDnzpGMZQm59/DSv+nVMnfaNu0MW8Ze+CLn4ia1u/kOqiznoVeEdgdv2jRnw=="],
+
+    "@prisma-next/sql-lane/@prisma-next/plan": ["@prisma-next/plan@0.3.0-dev.53", "", {}, "sha512-2GKIbfRno9XJqzG+XcSBTRmGJymcyGczfGQdQ5TEndXK3GawfSaDiTkUKgy0kqeiM+fRsn5taUTvJNYgZDzs5w=="],
+
+    "@prisma-next/sql-lane/@prisma-next/sql-relational-core": ["@prisma-next/sql-relational-core@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/operations": "0.3.0-dev.53", "@prisma-next/plan": "0.3.0-dev.53", "@prisma-next/sql-contract": "0.3.0-dev.53", "@prisma-next/sql-operations": "0.3.0-dev.53", "@prisma-next/utils": "0.3.0-dev.53", "arktype": "^2.1.29", "ts-toolbelt": "^9.6.0" } }, "sha512-TBXce7DMjNfau5dmd3RBTcNbm3/VovpdC7zRCSy3hkZJCBJYer+pb9Pus1CvpIeX/3kx1fxaZ2XD/oVniFrgxg=="],
+
+    "@prisma-next/sql-orm-client/@prisma-next/sql-contract": ["@prisma-next/sql-contract@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.45", "arktype": "^2.1.25" } }, "sha512-869HJrG8uIYFJkZU+gE4+n2v590L9nkzjpwHf55h44lWRftEdpO8d7dlgbtPSc+mT19mew5dNKNOdK1dOeckKA=="],
+
+    "@prisma-next/sql-orm-client/@prisma-next/sql-runtime": ["@prisma-next/sql-runtime@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.45", "@prisma-next/core-execution-plane": "0.3.0-dev.45", "@prisma-next/ids": "0.3.0-dev.45", "@prisma-next/operations": "0.3.0-dev.45", "@prisma-next/runtime-executor": "0.3.0-dev.45", "@prisma-next/sql-contract": "0.3.0-dev.45", "@prisma-next/sql-operations": "0.3.0-dev.45", "@prisma-next/sql-relational-core": "0.3.0-dev.45", "@prisma-next/utils": "0.3.0-dev.45", "arktype": "^2.1.26" } }, "sha512-uQcDsknEh69UTjf0O1S848Aewo9mstOS46lx/spOTpM+6qWxWVCLrx41MAGhaKJVdtPXTHVpjBP5GGbN0I0R0w=="],
+
+    "@prisma-next/sql-relational-core/@prisma-next/operations": ["@prisma-next/operations@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/plan": "0.3.0-dev.45" } }, "sha512-7oH2gAf1dMHcfQcQIbiLOfmK3JGwb7stF+fGzITs040Q2+3Eo5u6XDhEnRYHH8kfWOE4o5Q/k6gDrBfkrjs9ig=="],
+
+    "@prisma-next/sql-relational-core/@prisma-next/sql-contract": ["@prisma-next/sql-contract@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.45", "arktype": "^2.1.25" } }, "sha512-869HJrG8uIYFJkZU+gE4+n2v590L9nkzjpwHf55h44lWRftEdpO8d7dlgbtPSc+mT19mew5dNKNOdK1dOeckKA=="],
+
+    "@prisma-next/sql-relational-core/@prisma-next/sql-operations": ["@prisma-next/sql-operations@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/operations": "0.3.0-dev.45", "arktype": "^2.1.26" } }, "sha512-0Z32dVuIHm/tuAyG+GVL+IJF/gGTZ8XNRVW28mNJVg5Z9WqZP58QFz6pE7WWJciQtbGTAxmgPuxo1O6jhnYjAw=="],
+
+    "@prisma-next/sql-relational-core/@prisma-next/utils": ["@prisma-next/utils@0.3.0-dev.45", "", {}, "sha512-E6Gt4diw+SoJiiHBPW0ahK6iXbV8edGPHqNjflEyt6pbAwHzmi7PrytPRhNXprE/uWbhll+qAZdREYxF7SoMKA=="],
+
+    "@prisma-next/sql-runtime/@prisma-next/contract": ["@prisma-next/contract@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/operations": "0.3.0-dev.53" } }, "sha512-sL/yIe6g1F1Onb4qY6Y0V4qcTBfDnzpGMZQm59/DSv+nVMnfaNu0MW8Ze+CLn4ia1u/kOqiznoVeEdgdv2jRnw=="],
+
+    "@prisma-next/sql-runtime/@prisma-next/runtime-executor": ["@prisma-next/runtime-executor@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/operations": "0.3.0-dev.53", "arktype": "^2.1.25" } }, "sha512-jrkQjEfgXfwlxoxjN5qP3Y6xMy1TflGatx2vpjrIrOzWTwE4Nd5kR6cwSsY9Fsoa00wQhKuICfWYkGU4NpKyNw=="],
+
+    "@prisma-next/sql-runtime/@prisma-next/sql-relational-core": ["@prisma-next/sql-relational-core@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/operations": "0.3.0-dev.53", "@prisma-next/plan": "0.3.0-dev.53", "@prisma-next/sql-contract": "0.3.0-dev.53", "@prisma-next/sql-operations": "0.3.0-dev.53", "@prisma-next/utils": "0.3.0-dev.53", "arktype": "^2.1.29", "ts-toolbelt": "^9.6.0" } }, "sha512-TBXce7DMjNfau5dmd3RBTcNbm3/VovpdC7zRCSy3hkZJCBJYer+pb9Pus1CvpIeX/3kx1fxaZ2XD/oVniFrgxg=="],
+
+    "@prisma-next/sql-schema-ir/@prisma-next/contract": ["@prisma-next/contract@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/operations": "0.3.0-dev.53" } }, "sha512-sL/yIe6g1F1Onb4qY6Y0V4qcTBfDnzpGMZQm59/DSv+nVMnfaNu0MW8Ze+CLn4ia1u/kOqiznoVeEdgdv2jRnw=="],
+
+    "@prisma-next/target-postgres/@prisma-next/contract": ["@prisma-next/contract@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/operations": "0.3.0-dev.53" } }, "sha512-sL/yIe6g1F1Onb4qY6Y0V4qcTBfDnzpGMZQm59/DSv+nVMnfaNu0MW8Ze+CLn4ia1u/kOqiznoVeEdgdv2jRnw=="],
+
+    "@prisma-next/target-postgres/@prisma-next/sql-relational-core": ["@prisma-next/sql-relational-core@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/operations": "0.3.0-dev.53", "@prisma-next/plan": "0.3.0-dev.53", "@prisma-next/sql-contract": "0.3.0-dev.53", "@prisma-next/sql-operations": "0.3.0-dev.53", "@prisma-next/utils": "0.3.0-dev.53", "arktype": "^2.1.29", "ts-toolbelt": "^9.6.0" } }, "sha512-TBXce7DMjNfau5dmd3RBTcNbm3/VovpdC7zRCSy3hkZJCBJYer+pb9Pus1CvpIeX/3kx1fxaZ2XD/oVniFrgxg=="],
+
     "@tailwindcss/oxide-wasm32-wasi/@emnapi/core": ["@emnapi/core@1.8.1", "", { "dependencies": { "@emnapi/wasi-threads": "1.1.0", "tslib": "^2.4.0" }, "bundled": true }, "sha512-AvT9QFpxK0Zd8J0jopedNm+w/2fIzvtPKPjqyw9jwvBaReTTqPBk9Hixaz7KbjimP+QNz605/XnjFcDAL2pqBg=="],
 
     "@tailwindcss/oxide-wasm32-wasi/@emnapi/runtime": ["@emnapi/runtime@1.8.1", "", { "dependencies": { "tslib": "^2.4.0" }, "bundled": true }, "sha512-mehfKSMWjjNol8659Z8KxEMrdSJDDot5SXMq00dM8BN4o+CLNXQ0xH2V7EchNHV4RmbZLmmPdEaXZc5H2FXmDg=="],
@@ -1419,6 +1507,42 @@
     "@inquirer/core/wrap-ansi/string-width": ["string-width@4.2.3", "", { "dependencies": { "emoji-regex": "^8.0.0", "is-fullwidth-code-point": "^3.0.0", "strip-ansi": "^6.0.1" } }, "sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g=="],
 
     "@inquirer/core/wrap-ansi/strip-ansi": ["strip-ansi@6.0.1", "", { "dependencies": { "ansi-regex": "^5.0.1" } }, "sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A=="],
+
+    "@pokedex/db/@prisma-next/sql-orm-client/@prisma-next/contract": ["@prisma-next/contract@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/operations": "0.3.0-dev.53" } }, "sha512-sL/yIe6g1F1Onb4qY6Y0V4qcTBfDnzpGMZQm59/DSv+nVMnfaNu0MW8Ze+CLn4ia1u/kOqiznoVeEdgdv2jRnw=="],
+
+    "@pokedex/db/@prisma-next/sql-orm-client/@prisma-next/runtime-executor": ["@prisma-next/runtime-executor@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/operations": "0.3.0-dev.53", "arktype": "^2.1.25" } }, "sha512-jrkQjEfgXfwlxoxjN5qP3Y6xMy1TflGatx2vpjrIrOzWTwE4Nd5kR6cwSsY9Fsoa00wQhKuICfWYkGU4NpKyNw=="],
+
+    "@pokedex/db/@prisma-next/sql-orm-client/@prisma-next/sql-relational-core": ["@prisma-next/sql-relational-core@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/operations": "0.3.0-dev.53", "@prisma-next/plan": "0.3.0-dev.53", "@prisma-next/sql-contract": "0.3.0-dev.53", "@prisma-next/sql-operations": "0.3.0-dev.53", "@prisma-next/utils": "0.3.0-dev.53", "arktype": "^2.1.29", "ts-toolbelt": "^9.6.0" } }, "sha512-TBXce7DMjNfau5dmd3RBTcNbm3/VovpdC7zRCSy3hkZJCBJYer+pb9Pus1CvpIeX/3kx1fxaZ2XD/oVniFrgxg=="],
+
+    "@prisma-next/adapter-postgres/@prisma-next/sql-relational-core/@prisma-next/plan": ["@prisma-next/plan@0.3.0-dev.53", "", {}, "sha512-2GKIbfRno9XJqzG+XcSBTRmGJymcyGczfGQdQ5TEndXK3GawfSaDiTkUKgy0kqeiM+fRsn5taUTvJNYgZDzs5w=="],
+
+    "@prisma-next/driver-postgres/@prisma-next/sql-relational-core/@prisma-next/plan": ["@prisma-next/plan@0.3.0-dev.53", "", {}, "sha512-2GKIbfRno9XJqzG+XcSBTRmGJymcyGczfGQdQ5TEndXK3GawfSaDiTkUKgy0kqeiM+fRsn5taUTvJNYgZDzs5w=="],
+
+    "@prisma-next/family-sql/@prisma-next/sql-relational-core/@prisma-next/plan": ["@prisma-next/plan@0.3.0-dev.53", "", {}, "sha512-2GKIbfRno9XJqzG+XcSBTRmGJymcyGczfGQdQ5TEndXK3GawfSaDiTkUKgy0kqeiM+fRsn5taUTvJNYgZDzs5w=="],
+
+    "@prisma-next/postgres/@prisma-next/sql-orm-client/@prisma-next/contract": ["@prisma-next/contract@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/operations": "0.3.0-dev.53" } }, "sha512-sL/yIe6g1F1Onb4qY6Y0V4qcTBfDnzpGMZQm59/DSv+nVMnfaNu0MW8Ze+CLn4ia1u/kOqiznoVeEdgdv2jRnw=="],
+
+    "@prisma-next/postgres/@prisma-next/sql-orm-client/@prisma-next/runtime-executor": ["@prisma-next/runtime-executor@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.53", "@prisma-next/operations": "0.3.0-dev.53", "arktype": "^2.1.25" } }, "sha512-jrkQjEfgXfwlxoxjN5qP3Y6xMy1TflGatx2vpjrIrOzWTwE4Nd5kR6cwSsY9Fsoa00wQhKuICfWYkGU4NpKyNw=="],
+
+    "@prisma-next/postgres/@prisma-next/sql-relational-core/@prisma-next/contract": ["@prisma-next/contract@0.3.0-dev.53", "", { "dependencies": { "@prisma-next/operations": "0.3.0-dev.53" } }, "sha512-sL/yIe6g1F1Onb4qY6Y0V4qcTBfDnzpGMZQm59/DSv+nVMnfaNu0MW8Ze+CLn4ia1u/kOqiznoVeEdgdv2jRnw=="],
+
+    "@prisma-next/postgres/@prisma-next/sql-relational-core/@prisma-next/plan": ["@prisma-next/plan@0.3.0-dev.53", "", {}, "sha512-2GKIbfRno9XJqzG+XcSBTRmGJymcyGczfGQdQ5TEndXK3GawfSaDiTkUKgy0kqeiM+fRsn5taUTvJNYgZDzs5w=="],
+
+    "@prisma-next/sql-kysely-lane/@prisma-next/sql-relational-core/@prisma-next/plan": ["@prisma-next/plan@0.3.0-dev.53", "", {}, "sha512-2GKIbfRno9XJqzG+XcSBTRmGJymcyGczfGQdQ5TEndXK3GawfSaDiTkUKgy0kqeiM+fRsn5taUTvJNYgZDzs5w=="],
+
+    "@prisma-next/sql-orm-client/@prisma-next/sql-runtime/@prisma-next/core-execution-plane": ["@prisma-next/core-execution-plane@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.45", "@prisma-next/core-control-plane": "0.3.0-dev.45" } }, "sha512-sufY1fNrx3ugLAoc07qPyhQGnv+RbtWePMcg0zpcxZTVTEs9hscTljrGNPQfN9X7INstgSMNLnOVUVVK9qbhnA=="],
+
+    "@prisma-next/sql-orm-client/@prisma-next/sql-runtime/@prisma-next/ids": ["@prisma-next/ids@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.45", "@prisma-next/contract-authoring": "0.3.0-dev.45", "@prisma-next/utils": "0.3.0-dev.45", "uniku": "^0.0.12" } }, "sha512-EVGdQLbNLO3NnprQzS9WEtLoo5wzmX8I99qD2Fp7wjYcLR2UdMKa/XOho84Dg8JuDEGte3tNgvL/LYF70o2fpw=="],
+
+    "@prisma-next/sql-orm-client/@prisma-next/sql-runtime/@prisma-next/operations": ["@prisma-next/operations@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/plan": "0.3.0-dev.45" } }, "sha512-7oH2gAf1dMHcfQcQIbiLOfmK3JGwb7stF+fGzITs040Q2+3Eo5u6XDhEnRYHH8kfWOE4o5Q/k6gDrBfkrjs9ig=="],
+
+    "@prisma-next/sql-orm-client/@prisma-next/sql-runtime/@prisma-next/sql-operations": ["@prisma-next/sql-operations@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/operations": "0.3.0-dev.45", "arktype": "^2.1.26" } }, "sha512-0Z32dVuIHm/tuAyG+GVL+IJF/gGTZ8XNRVW28mNJVg5Z9WqZP58QFz6pE7WWJciQtbGTAxmgPuxo1O6jhnYjAw=="],
+
+    "@prisma-next/sql-orm-client/@prisma-next/sql-runtime/@prisma-next/utils": ["@prisma-next/utils@0.3.0-dev.45", "", {}, "sha512-E6Gt4diw+SoJiiHBPW0ahK6iXbV8edGPHqNjflEyt6pbAwHzmi7PrytPRhNXprE/uWbhll+qAZdREYxF7SoMKA=="],
+
+    "@prisma-next/sql-runtime/@prisma-next/sql-relational-core/@prisma-next/plan": ["@prisma-next/plan@0.3.0-dev.53", "", {}, "sha512-2GKIbfRno9XJqzG+XcSBTRmGJymcyGczfGQdQ5TEndXK3GawfSaDiTkUKgy0kqeiM+fRsn5taUTvJNYgZDzs5w=="],
+
+    "@prisma-next/target-postgres/@prisma-next/sql-relational-core/@prisma-next/plan": ["@prisma-next/plan@0.3.0-dev.53", "", {}, "sha512-2GKIbfRno9XJqzG+XcSBTRmGJymcyGczfGQdQ5TEndXK3GawfSaDiTkUKgy0kqeiM+fRsn5taUTvJNYgZDzs5w=="],
 
     "@tanstack/router-plugin/chokidar/readdirp": ["readdirp@3.6.0", "", { "dependencies": { "picomatch": "^2.2.1" } }, "sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA=="],
 
@@ -1565,6 +1689,12 @@
     "@inquirer/core/wrap-ansi/string-width/emoji-regex": ["emoji-regex@8.0.0", "", {}, "sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A=="],
 
     "@inquirer/core/wrap-ansi/strip-ansi/ansi-regex": ["ansi-regex@5.0.1", "", {}, "sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ=="],
+
+    "@pokedex/db/@prisma-next/sql-orm-client/@prisma-next/sql-relational-core/@prisma-next/plan": ["@prisma-next/plan@0.3.0-dev.53", "", {}, "sha512-2GKIbfRno9XJqzG+XcSBTRmGJymcyGczfGQdQ5TEndXK3GawfSaDiTkUKgy0kqeiM+fRsn5taUTvJNYgZDzs5w=="],
+
+    "@prisma-next/sql-orm-client/@prisma-next/sql-runtime/@prisma-next/core-execution-plane/@prisma-next/core-control-plane": ["@prisma-next/core-control-plane@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.45", "@prisma-next/operations": "0.3.0-dev.45", "@prisma-next/utils": "0.3.0-dev.45", "arktype": "^2.1.26", "prettier": "^3.3.3" } }, "sha512-zLF9aF9NCUHhx35PU/CYKxuPNy4fzKuTbJFkdLIj3HcdiiAnIOaorhsJL+YogT0Q5LAZfaLihjMZiRb7dstMNw=="],
+
+    "@prisma-next/sql-orm-client/@prisma-next/sql-runtime/@prisma-next/ids/@prisma-next/contract-authoring": ["@prisma-next/contract-authoring@0.3.0-dev.45", "", { "dependencies": { "@prisma-next/contract": "0.3.0-dev.45", "@prisma-next/utils": "0.3.0-dev.45", "ts-toolbelt": "^9.6.0" } }, "sha512-BL8+1FLYm/bB8GLyt2A04fRPGLXZi7Fnxa1vegb7kPS1s77e+gFwNeAXr61Aisza0M3hfnG1tdTBid9jT8X03w=="],
 
     "@tanstack/router-plugin/chokidar/readdirp/picomatch": ["picomatch@2.3.1", "", {}, "sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA=="],
 

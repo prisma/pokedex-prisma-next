@@ -66,13 +66,9 @@ export const pokedexRouter = {
         );
       }
 
-      // .include() eagerly loads a relation, .take() limits rows,
-      // .all() returns an AsyncIterable we can stream with yield
+      // .take() limits rows, .all() returns an AsyncIterable we can stream with yield
       const delayMs = input.delayMs;
-      for await (const row of query
-        .include("spawnPoints", (sp) => sp)
-        .take(input.limit)
-        .all()) {
+      for await (const row of query.take(input.limit).all()) {
         yield row;
         if (delayMs > 0) {
           await new Promise((resolve) => setTimeout(resolve, delayMs));
@@ -91,14 +87,8 @@ export const pokedexRouter = {
     .handler(async ({ input }) => {
       const client = createOrmClient(db.runtime());
 
-      // .byDexNumber() is a custom scope, .include() loads the relation,
-      // .find() returns a single result (or undefined)
-      return await client
-        .pokemon!.byDexNumber(input.dexNumber)
-        .include("spawnPoints", (sp) =>
-          sp.orderBy((s) => s.encounterRate.desc()),
-        )
-        .find();
+      // .byDexNumber() is a custom scope, .first() returns a single result (or null)
+      return await client.pokemon!.byDexNumber(input.dexNumber).first();
     }),
 
   // ──────────────────────────────────────────────────────────────────
@@ -171,10 +161,11 @@ export const pokedexRouter = {
         ? trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase()
         : null;
 
-      // db.kysely() returns a Kysely instance typed from the contract schema
-      const kysely = db.kysely(db.runtime());
+      // db.kysely is a build-only Kysely surface — build a plan, then execute via runtime
+      const runtime = db.runtime();
+      const k = db.kysely;
 
-      let query = kysely
+      let query = k
         .selectFrom("pokemon")
         .select([
           "dexNumber",
@@ -197,7 +188,7 @@ export const pokedexRouter = {
         );
       }
 
-      const rows = await query.execute();
+      const rows = await runtime.execute(k.build(query)).toArray();
 
       const withStats = rows.map((row) => ({
         ...row,
