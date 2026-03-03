@@ -1,0 +1,36 @@
+model Pokemon {
+  id            Int       @id @default(autoincrement())
+  dexNumber     Int       @unique
+  name          String    @unique
+  primaryType   String
+  secondaryType String?
+  hp            Int
+  attack        Int
+  defense       Int
+  speed         Int
+  spriteUrl     String
+  isLegendary   Boolean
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now())
+
+  @@index([primaryType])
+  @@index([isLegendary])
+  @@map("pokemon")
+}
+
+model SpawnPoint {
+  id            Int      @id @default(autoincrement())
+  pokemonId     Int
+  label         String
+  region        String
+  latitude      Float
+  longitude     Float
+  encounterRate Int
+  createdAt     DateTime @default(now())
+  pokemon       Pokemon  @relation(fields: [pokemonId], references: [id], onDelete: Cascade)
+
+  @@index([pokemonId])
+  @@index([region])
+  @@index([latitude, longitude])
+  @@map("spawnPoint")
+}

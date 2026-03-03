@@ -41,11 +41,8 @@ class PokemonCollection extends Collection<Contract, "Pokemon"> {
     );
   }
 
-  withSpawnPoints() {
-    return this.include("spawnPoints", (sp) =>
-      sp.orderBy((s) => s.encounterRate.desc()),
-    );
-  }
+  // withSpawnPoints() removed — PSL v1 doesn't emit model relations.
+  // Use Kysely to fetch spawn points separately (see pokedex router).
 }
 
 class SpawnPointCollection extends Collection<Contract, "SpawnPoint"> {

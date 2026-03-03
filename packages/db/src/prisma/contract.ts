@@ -1,7 +1,10 @@
-// Prisma Next contract — the single source of truth for the database schema.
-// Tables, columns, models, relations, and capabilities are all defined here.
-// Running `bun run db:emit` generates contract.json + contract.d.ts from this file.
+// Alternative: TypeScript contract — equivalent to schema.prisma (the PSL source).
+// The PSL file (schema.prisma) is now the source of truth.
+// To switch back, update prisma-next.config.ts to import and use this contract instead.
+//
+// Running `bun run db:emit` generates contract.json + contract.d.ts from the PSL file.
 
+/*
 import type { CodecTypes } from "@prisma-next/adapter-postgres/codec-types";
 
 import {
@@ -134,3 +137,4 @@ export const contract = defineContract<CodecTypes>()
     },
   })
   .build();
+*/

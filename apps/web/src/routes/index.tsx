@@ -66,7 +66,6 @@ function PokedexRoute() {
   );
 
   const selectedPokemon = selectedPokemonQuery.data;
-  const selectedSpawnPoints = selectedPokemon?.spawnPoints ?? [];
 
   const topTypes = useMemo(() => {
     return (typeBreakdownQuery.data ?? []).slice(0, 5);
@@ -235,7 +234,7 @@ function PokedexRoute() {
               <CardHeader>
                 <CardTitle>Selected Pokemon</CardTitle>
                 <CardDescription>
-                  Via .where().include("spawnPoints").find() relation lookup.
+                  Via .where().find() custom collection scope.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -246,16 +245,12 @@ function PokedexRoute() {
                     <div className="font-medium">
                       #{selectedPokemon.dexNumber} {selectedPokemon.name}
                     </div>
-                    <div>Spawn points: {selectedSpawnPoints.length}</div>
-                    <ul className="space-y-2 text-muted-foreground">
-                      {selectedSpawnPoints
-                        .slice(0, 3)
-                        .map((spawn) => (
-                          <li key={spawn.id}>
-                            {spawn.label} · {spawn.region}
-                          </li>
-                        ))}
-                    </ul>
+                    <div className="grid grid-cols-2 gap-2 text-muted-foreground">
+                      <div>HP: {selectedPokemon.hp}</div>
+                      <div>ATK: {selectedPokemon.attack}</div>
+                      <div>DEF: {selectedPokemon.defense}</div>
+                      <div>SPD: {selectedPokemon.speed}</div>
+                    </div>
                   </div>
                 ) : (
                   <div className="text-sm text-muted-foreground">
