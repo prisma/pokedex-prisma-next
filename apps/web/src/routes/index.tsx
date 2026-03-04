@@ -235,7 +235,7 @@ function PokedexRoute() {
               <CardHeader>
                 <CardTitle>Selected Pokemon</CardTitle>
                 <CardDescription>
-                  Via .where().include("spawnPoints").find() relation lookup.
+                  Via .where().include("spawnPoints").first() relation lookup.
                 </CardDescription>
               </CardHeader>
               <CardContent>

@@ -107,4 +107,3 @@ kysely.selectFrom("pokemon").select([...]).where(...).execute();
 | `bun run db:emit` | Emit contract artifacts |
 | `bun run db:push` | Push schema to database |
 | `bun run db:verify` | Verify marker/contract compatibility |
-| `bun run db:studio` | Open Prisma Studio |

@@ -92,13 +92,13 @@ export const pokedexRouter = {
       const client = createOrmClient(db.runtime());
 
       // .byDexNumber() is a custom scope, .include() loads the relation,
-      // .find() returns a single result (or undefined)
+      // .first() returns a single result (or null)
       return await client
         .pokemon!.byDexNumber(input.dexNumber)
         .include("spawnPoints", (sp) =>
           sp.orderBy((s) => s.encounterRate.desc()),
         )
-        .find();
+        .first();
     }),
 
   // ──────────────────────────────────────────────────────────────────
