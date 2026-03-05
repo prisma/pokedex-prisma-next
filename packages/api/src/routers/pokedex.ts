@@ -37,9 +37,13 @@ export const pokedexRouter = {
     .input(listPokemonSchema)
     .handler(async function* ({ input }) {
       const client = createOrmClient(db.runtime());
+      const pokemon = client.pokemon;
+      if (!pokemon) {
+        throw new Error("Pokemon collection is not configured");
+      }
 
       // .orderBy() takes a callback with typed column accessors
-      let query = client.pokemon!.orderBy((p) => p.dexNumber.asc());
+      let query = pokemon.orderBy((p) => p.dexNumber.asc());
 
       // .where() accepts an object for simple equality filters
       if (input.legendaryOnly) {
@@ -90,11 +94,15 @@ export const pokedexRouter = {
     .input(z.object({ dexNumber: z.number().int().min(1).max(9999) }))
     .handler(async ({ input }) => {
       const client = createOrmClient(db.runtime());
+      const pokemon = client.pokemon;
+      if (!pokemon) {
+        throw new Error("Pokemon collection is not configured");
+      }
 
       // .byDexNumber() is a custom scope, .include() loads the relation,
       // .first() returns a single result (or null)
-      return await client
-        .pokemon!.byDexNumber(input.dexNumber)
+      return await pokemon
+        .byDexNumber(input.dexNumber)
         .include("spawnPoints", (sp) =>
           sp.orderBy((s) => s.encounterRate.desc()),
         )
@@ -109,7 +117,10 @@ export const pokedexRouter = {
   // ──────────────────────────────────────────────────────────────────
   typeBreakdown: publicProcedure.handler(async () => {
     const client = createOrmClient(db.runtime());
-    const pokemon = client.pokemon!;
+    const pokemon = client.pokemon;
+    if (!pokemon) {
+      throw new Error("Pokemon collection is not configured");
+    }
 
     // Run 4 aggregations in parallel: total + legendary counts for both type columns
     const [primaryTotal, primaryLegendary, secondaryTotal, secondaryLegendary] =
@@ -159,9 +170,9 @@ export const pokedexRouter = {
 
   // ──────────────────────────────────────────────────────────────────
   // Feature: Kysely escape hatch
-  // db.kysely() gives a fully typed Kysely instance derived from the
-  // Prisma Next contract — write raw SQL DSL when the ORM isn't enough.
-  // Unlike $queryRaw, Kysely queries are type-checked.
+  // db.kysely is a build-only typed Kysely authoring surface derived
+  // from the Prisma Next contract. Build a query plan with .build(...)
+  // and execute via runtime.execute(...).
   // ──────────────────────────────────────────────────────────────────
   teamBuilder: publicProcedure
     .input(teamBuilderSchema)
@@ -171,8 +182,8 @@ export const pokedexRouter = {
         ? trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase()
         : null;
 
-      // db.kysely() returns a Kysely instance typed from the contract schema
-      const kysely = db.kysely(db.runtime());
+      const runtime = db.runtime();
+      const kysely = db.kysely;
 
       let query = kysely
         .selectFrom("pokemon")
@@ -197,7 +208,7 @@ export const pokedexRouter = {
         );
       }
 
-      const rows = await query.execute();
+      const rows = await runtime.execute(kysely.build(query)).toArray();
 
       const withStats = rows.map((row) => ({
         ...row,
