@@ -1,0 +1,44 @@
+services:
+  postgres:
+    container_name: pokedex-db
+    image: postgres:latest
+    networks:
+      - pokedex-net
+    command:
+      [
+        "postgres",
+        "-c",
+        "max_connections=200",
+        "-c",
+        "listen_addresses=*",
+        "-c",
+        "shared_buffers=256MB",
+        "-c",
+        "effective_cache_size=1GB",
+        "-c",
+        "work_mem=4MB",
+        "-c",
+        "log_timezone=America/New_York",
+        "-c",
+        "ssl=on",
+        "-c",
+        "ssl_cert_file=/etc/ssl/certs/server.crt",
+        "-c",
+        "ssl_key_file=/etc/ssl/certs/server.key",
+      ]
+    restart: always
+    ports:
+      - 5432:5432
+    env_file:
+      - .env.db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./certs:/etc/ssl/certs
+
+volumes:
+  postgres_data:
+
+networks:
+  pokedex-net:
+    name: pokedex-net
+    driver: bridge
